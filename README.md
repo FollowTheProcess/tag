@@ -84,9 +84,3 @@ This package was created with [copier] and the [FollowTheProcess/go_copier] proj
 [just]: https://github.com/casey/just
 [copier]: https://copier.readthedocs.io/en/latest/
 [FollowTheProcess/go_copier]: https://github.com/FollowTheProcess/go_copier
-
-## Regex
-
-```go
-var semVerRegex = regexp.MustCompile(fmt.Sprintf(`^v?(?P<%s>0|[1-9]\d*)\.(?P<%s>0|[1-9]\d*)\.(?P<%s>0|[1-9]\d*)(?:-(?P<%s>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<%s>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`, major, minor, patch, prerelease, buildmetadata))
-```
