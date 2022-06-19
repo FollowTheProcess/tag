@@ -9,20 +9,41 @@ import (
 
 // App represents the tag program.
 type App struct {
-	Out     io.Writer
-	Options *Options
+	Out io.Writer // Where to write output to
 }
 
-// Options holds all the flag options for tag, these will be at their zero values
-// if the flags were not set and the value of the flag otherwise.
-type Options struct {
-	Switch bool // Some boolean switch
+// Patch is the tag patch subcommand.
+func (a *App) Patch(force, push bool, message string) error {
+	fmt.Printf("force: %v\n", force)
+	fmt.Printf("push: %v\n", push)
+	fmt.Printf("message: %s\n", message)
+	return nil
 }
 
-// Run is the entry point to the tag program.
-func (a *App) Run(args []string) error {
-	fmt.Fprintf(a.Out, "Args: %v\n", args)
-	fmt.Fprintf(a.Out, "Switch flag was %v\n", a.Options.Switch)
+// Minor is the tag minor subcommand.
+func (a *App) Minor(force, push bool, message string) error {
+	fmt.Printf("force: %v\n", force)
+	fmt.Printf("push: %v\n", push)
+	fmt.Printf("message: %s\n", message)
+	return nil
+}
 
+// Major is the tag major subcommand.
+func (a *App) Major(force, push bool, message string) error {
+	fmt.Printf("force: %v\n", force)
+	fmt.Printf("push: %v\n", push)
+	fmt.Printf("message: %s\n", message)
+	return nil
+}
+
+// List is what happens when tag is invoked with no subcommands.
+func (a *App) List() error {
+	fmt.Println("No subcommands, list all tags in order")
+	return nil
+}
+
+// Latest is the tag latest subcommand.
+func (a *App) Latest() error {
+	fmt.Println("Get latest tag")
 	return nil
 }
