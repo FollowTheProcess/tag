@@ -27,6 +27,18 @@ type Version struct {
 	Patch         int
 }
 
+// String satisfies the stringer interface and allows a Version to print itself.
+func (v Version) String() string {
+	base := fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
+	if v.Prerelease != "" {
+		base = fmt.Sprintf("%s-%s", base, v.Prerelease)
+	}
+	if v.Buildmetadata != "" {
+		base = fmt.Sprintf("%s+%s", base, v.Buildmetadata)
+	}
+	return base
+}
+
 // Parse creates a Version from a semver string.
 func Parse(text string) (Version, error) {
 	if !semVerRegex.MatchString(text) {

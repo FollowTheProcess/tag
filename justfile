@@ -32,6 +32,15 @@ fmt:
 test *flags: fmt
     go test -race ./... {{ flags }}
 
+# Run all project benchmarks
+bench: fmt
+    go test ./... -run=None -benchmem -bench .
+
+# Generate and view a CPU/Memory profile
+pprof pkg type:
+    go test ./{{ pkg }} -cpuprofile cpu.pprof -memprofile mem.pprof -bench .
+    go tool pprof -http=:8000 {{ type }}.pprof
+
 # Lint the project and auto-fix errors if possible
 lint: fmt
     golangci-lint run --fix
