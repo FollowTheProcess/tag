@@ -18,6 +18,9 @@
 *.out
 coverage.html
 
+# Benchmarks and profiling
+*.pprof
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
