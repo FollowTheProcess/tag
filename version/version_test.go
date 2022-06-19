@@ -83,3 +83,129 @@ func TestParse(t *testing.T) {
 		})
 	}
 }
+
+func TestBumpMajor(t *testing.T) {
+	tests := []struct {
+		name    string
+		current version.Version
+		want    version.Version
+	}{
+		{
+			name:    "zeros",
+			current: version.Version{},
+			want:    version.Version{Major: 1},
+		},
+		{
+			name:    "minor",
+			current: version.Version{Minor: 1},
+			want:    version.Version{Major: 1},
+		},
+		{
+			name:    "patch",
+			current: version.Version{Patch: 1},
+			want:    version.Version{Major: 1},
+		},
+		{
+			name:    "everything",
+			current: version.Version{Major: 0, Minor: 32, Patch: 6, Prerelease: "rc.1", Buildmetadata: "build.123"},
+			want:    version.Version{Major: 1},
+		},
+		{
+			name:    "big numbers",
+			current: version.Version{Major: 123, Minor: 32, Patch: 6, Prerelease: "rc.1", Buildmetadata: "build.123"},
+			want:    version.Version{Major: 124},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := version.BumpMajor(tt.current); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("got %#v, wanted %#v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestBumpMinor(t *testing.T) {
+	tests := []struct {
+		name    string
+		current version.Version
+		want    version.Version
+	}{
+		{
+			name:    "zeros",
+			current: version.Version{},
+			want:    version.Version{Minor: 1},
+		},
+		{
+			name:    "minor",
+			current: version.Version{Minor: 1},
+			want:    version.Version{Minor: 2},
+		},
+		{
+			name:    "patch",
+			current: version.Version{Patch: 1},
+			want:    version.Version{Minor: 1},
+		},
+		{
+			name:    "everything",
+			current: version.Version{Major: 0, Minor: 32, Patch: 6, Prerelease: "rc.1", Buildmetadata: "build.123"},
+			want:    version.Version{Minor: 33},
+		},
+		{
+			name:    "big numbers",
+			current: version.Version{Major: 123, Minor: 32, Patch: 6, Prerelease: "rc.1", Buildmetadata: "build.123"},
+			want:    version.Version{Major: 123, Minor: 33},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := version.BumpMinor(tt.current); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("got %#v, wanted %#v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestBumpPatch(t *testing.T) {
+	tests := []struct {
+		name    string
+		current version.Version
+		want    version.Version
+	}{
+		{
+			name:    "zeros",
+			current: version.Version{},
+			want:    version.Version{Patch: 1},
+		},
+		{
+			name:    "minor",
+			current: version.Version{Minor: 1},
+			want:    version.Version{Minor: 1, Patch: 1},
+		},
+		{
+			name:    "patch",
+			current: version.Version{Patch: 1},
+			want:    version.Version{Patch: 2},
+		},
+		{
+			name:    "everything",
+			current: version.Version{Major: 0, Minor: 32, Patch: 6, Prerelease: "rc.1", Buildmetadata: "build.123"},
+			want:    version.Version{Minor: 32, Patch: 7},
+		},
+		{
+			name:    "big numbers",
+			current: version.Version{Major: 123, Minor: 32, Patch: 6, Prerelease: "rc.1", Buildmetadata: "build.123"},
+			want:    version.Version{Major: 123, Minor: 32, Patch: 7},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := version.BumpPatch(tt.current); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("got %#v, wanted %#v", got, tt.want)
+			}
+		})
+	}
+}
