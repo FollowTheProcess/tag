@@ -1,0 +1,14 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v0.3.5
+_src_path: gh:FollowTheProcess/go_copier
+author_email: tomfleet2018@gmail.com
+author_name: Tom Fleet
+create_github_repo: true
+description: Easy semantic versioning from the command line
+github_url: https://github.com/FollowTheProcess/tag
+github_username: FollowTheProcess
+initialise_git_repo: true
+license: Apache Software License 2.0
+project_name: tag
+project_slug: tag
+project_type: binary
