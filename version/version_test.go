@@ -247,6 +247,43 @@ func TestVersionString(t *testing.T) {
 	}
 }
 
+func TestVersionTagString(t *testing.T) {
+	tests := []struct {
+		name    string
+		want    string
+		version version.Version
+	}{
+		{
+			name:    "empty",
+			version: version.Version{},
+			want:    "v0.0.0",
+		},
+		{
+			name:    "just version",
+			version: version.Version{Major: 1, Minor: 6, Patch: 12},
+			want:    "v1.6.12",
+		},
+		{
+			name:    "prerelease",
+			version: version.Version{Major: 1, Minor: 6, Patch: 12, Prerelease: "rc.1"},
+			want:    "v1.6.12-rc.1",
+		},
+		{
+			name:    "prerelease and build",
+			version: version.Version{Major: 1, Minor: 6, Patch: 12, Prerelease: "rc.1", Buildmetadata: "build.123"},
+			want:    "v1.6.12-rc.1+build.123",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.version.Tag(); got != tt.want {
+				t.Errorf("got %q, wanted %q", got, tt.want)
+			}
+		})
+	}
+}
+
 func BenchmarkVersionParse(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		_, err := version.Parse("v12.4.3-rc1+build.123")
@@ -267,5 +304,19 @@ func BenchmarkVersionString(b *testing.B) {
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		_ = v.String()
+	}
+}
+
+func BenchmarkVersionTag(b *testing.B) {
+	v := version.Version{
+		Prerelease:    "rc1",
+		Buildmetadata: "build.123",
+		Major:         3,
+		Minor:         4,
+		Patch:         12,
+	}
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		_ = v.Tag()
 	}
 }

@@ -31,12 +31,18 @@ type Version struct {
 func (v Version) String() string {
 	base := fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
 	if v.Prerelease != "" {
-		base = fmt.Sprintf("%s-%s", base, v.Prerelease)
+		base += "-" + v.Prerelease
 	}
 	if v.Buildmetadata != "" {
-		base = fmt.Sprintf("%s+%s", base, v.Buildmetadata)
+		base += "+" + v.Buildmetadata
 	}
 	return base
+}
+
+// Tag creates a string representation of the version suitable for git tags
+// it is identical to the String() method except prepends a 'v' to the result.
+func (v Version) Tag() string {
+	return "v" + v.String()
 }
 
 // Parse creates a Version from a semver string.
