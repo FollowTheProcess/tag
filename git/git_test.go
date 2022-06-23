@@ -242,3 +242,44 @@ func TestCreateTag(t *testing.T) {
 		})
 	}
 }
+
+func TestIsRepo(t *testing.T) {
+	tests := []struct {
+		name   string
+		stdout string
+		status int
+		want   bool
+	}{
+		{
+			name:   "yes",
+			stdout: "true",
+			status: 0,
+			want:   true,
+		},
+		{
+			name:   "no",
+			stdout: "fatal: not a git repository (or any of the parent directories): .git",
+			status: 1,
+			want:   false,
+		},
+		{
+			name:   "some other error",
+			stdout: "Argh!",
+			status: 1,
+			want:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockExitStatus = tt.status
+			mockStdout = tt.stdout
+			gitCommand = fakeExecCommand
+			defer func() { gitCommand = exec.Command }()
+
+			if got := IsRepo("."); got != tt.want {
+				t.Errorf("IsRepo returned %v, wanted %v", got, tt.want)
+			}
+		})
+	}
+}
