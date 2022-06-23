@@ -30,7 +30,7 @@ fmt:
 
 # Run all project unit tests
 test *flags: fmt
-    go test -race ./... {{ flags }}
+    gotest -race ./... {{ flags }}
 
 # Run all project benchmarks
 bench: fmt
@@ -47,7 +47,7 @@ lint: fmt
 
 # Calculate test coverage and render the html
 cover:
-    go test -race -cover -coverprofile={{ COVERAGE_DATA }} ./...
+    gotest -race -cover -coverprofile={{ COVERAGE_DATA }} ./...
     go tool cover -html={{ COVERAGE_DATA }} -o {{ COVERAGE_HTML }}
     open {{ COVERAGE_HTML }}
 
