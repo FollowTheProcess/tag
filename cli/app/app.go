@@ -5,11 +5,23 @@ package app
 import (
 	"fmt"
 	"io"
+
+	"github.com/FollowTheProcess/msg"
+	"github.com/FollowTheProcess/tag/git"
 )
 
 // App represents the tag program.
 type App struct {
-	Out io.Writer // Where to write output to
+	Out     io.Writer    // Where to write output to
+	Printer *msg.Printer // The app's printer
+}
+
+// New creates and returns a new app.
+func New(out io.Writer) *App {
+	printer := msg.Default()
+	printer.Out = out
+	app := &App{Out: out, Printer: printer}
+	return app
 }
 
 // Patch is the tag patch subcommand.
@@ -38,12 +50,20 @@ func (a *App) Major(force, push bool, message string) error {
 
 // List is what happens when tag is invoked with no subcommands.
 func (a *App) List() error {
-	fmt.Println("No subcommands, list all tags in order")
+	list, err := git.ListTags()
+	if err != nil {
+		return err
+	}
+	fmt.Fprint(a.Out, list)
 	return nil
 }
 
 // Latest is the tag latest subcommand.
 func (a *App) Latest() error {
-	fmt.Println("Get latest tag")
+	latest, err := git.LatestTag()
+	if err != nil {
+		return err
+	}
+	fmt.Fprint(a.Out, latest)
 	return nil
 }

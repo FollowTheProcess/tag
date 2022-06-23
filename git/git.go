@@ -4,6 +4,7 @@ package git
 
 import (
 	"bytes"
+	"errors"
 	"os/exec"
 )
 
@@ -26,8 +27,12 @@ func Add() error {
 
 // ListTags lists all tags in descending order (latest at the top).
 func ListTags() (string, error) {
+	// git will return nothing if there are no tags
 	cmd := gitCommand("git", "tag", "--sort=-version:refname")
 	out, err := cmd.CombinedOutput()
+	if bytes.Equal(out, []byte("")) {
+		return "", errors.New("No tags found")
+	}
 	return string(out), err
 }
 
@@ -35,6 +40,9 @@ func ListTags() (string, error) {
 func LatestTag() (string, error) {
 	cmd := gitCommand("git", "describe", "--tags", "--abbrev=0")
 	out, err := cmd.CombinedOutput()
+	if bytes.Contains(out, []byte("fatal: No names found")) {
+		return "", errors.New("No tags found")
+	}
 	return string(out), err
 }
 

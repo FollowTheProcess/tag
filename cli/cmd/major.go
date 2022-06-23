@@ -10,7 +10,7 @@ import (
 
 // buildMajorCmd builds and returns the tag major CLI subcommand.
 func buildMajorCmd() *cobra.Command {
-	tag := &app.App{Out: os.Stdout}
+	tag := app.New(os.Stdout)
 	var (
 		force   bool
 		push    bool

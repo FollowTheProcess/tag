@@ -10,7 +10,7 @@ import (
 
 // buildPatchCmd builds and returns the tag patch CLI subcommand.
 func buildPatchCmd() *cobra.Command {
-	tag := &app.App{Out: os.Stdout}
+	tag := app.New(os.Stdout)
 	var (
 		force   bool
 		push    bool

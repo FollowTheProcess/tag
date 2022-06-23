@@ -10,7 +10,7 @@ import (
 
 // buildLatestCmd builds and returns the tag latest CLI subcommand.
 func buildLatestCmd() *cobra.Command {
-	tag := &app.App{Out: os.Stdout}
+	tag := app.New(os.Stdout)
 	latestCmd := &cobra.Command{
 		Use:   "latest",
 		Args:  cobra.NoArgs,
