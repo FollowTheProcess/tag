@@ -19,7 +19,7 @@ var (
 
 // BuildRootCmd builds and returns the root tag CLI command.
 func BuildRootCmd() *cobra.Command {
-	tag := &app.App{Out: os.Stdout}
+	tag := app.New(os.Stdout)
 	rootCmd := &cobra.Command{
 		Use:           "tag <subcommand> [flags]",
 		Version:       version,

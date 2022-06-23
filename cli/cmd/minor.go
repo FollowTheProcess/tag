@@ -10,7 +10,7 @@ import (
 
 // buildMinorCmd builds and returns the tag minor CLI subcommand.
 func buildMinorCmd() *cobra.Command {
-	tag := &app.App{Out: os.Stdout}
+	tag := app.New(os.Stdout)
 	var (
 		force   bool
 		push    bool

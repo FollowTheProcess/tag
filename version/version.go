@@ -28,6 +28,8 @@ type Version struct {
 }
 
 // String satisfies the stringer interface and allows a Version to print itself.
+//  v := Version{Major: 1, Minor: 2, Patch: 3}
+//  fmt.Println(v) // "1.2.3"
 func (v Version) String() string {
 	base := fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
 	if v.Prerelease != "" {
@@ -41,6 +43,8 @@ func (v Version) String() string {
 
 // Tag creates a string representation of the version suitable for git tags
 // it is identical to the String() method except prepends a 'v' to the result.
+//  v := Version{Major: 1, Minor: 2, Patch: 3}
+//  fmt.Println(v) // "v1.2.3"
 func (v Version) Tag() string {
 	return "v" + v.String()
 }
