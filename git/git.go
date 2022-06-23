@@ -3,6 +3,7 @@
 package git
 
 import (
+	"bytes"
 	"os/exec"
 )
 
@@ -46,4 +47,18 @@ func CreateTag(tag, message string) (string, error) {
 	cmd := gitCommand("git", "tag", "-a", tag, "-m", message)
 	out, err := cmd.CombinedOutput()
 	return string(out), err
+}
+
+// IsRepo detects whether or not we are currently in a git repo.
+func IsRepo(cwd string) bool {
+	// git rev-parse --is-inside-work-tree
+	cmd := gitCommand("git", "rev-parse", "--is-inside-work-tree")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return false
+	}
+	if !bytes.Equal(bytes.TrimSpace(bytes.ToLower(out)), []byte("true")) {
+		return false
+	}
+	return true
 }
