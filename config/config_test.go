@@ -16,7 +16,7 @@ func TestLoad(t *testing.T) {
 		t.Fatalf("config.Load returned an error: %v", err)
 	}
 
-	want := config.Config{
+	want := &config.Config{
 		Tag: config.Tag{
 			Files: []config.File{
 				{
@@ -35,6 +35,46 @@ func TestLoad(t *testing.T) {
 
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got %#v, wanted %#v", got, want)
+	}
+}
+
+func TestRender(t *testing.T) {
+	conf := &config.Config{
+		Tag: config.Tag{
+			Files: []config.File{
+				{
+					Path:    "hello.go",
+					Search:  "version {{.Current}}",
+					Replace: "version {{.Next}}",
+				},
+				{
+					Path:    "another.go",
+					Search:  "version {{.Current}}",
+					Replace: "version {{.Next}}",
+				},
+			},
+		},
+	}
+
+	if err := conf.Render("0.1.0", "0.2.0"); err != nil {
+		t.Fatalf("Render returned an error: %v", err)
+	}
+
+	want := []config.File{
+		{
+			Path:    "hello.go",
+			Search:  "version 0.1.0",
+			Replace: "version 0.2.0",
+		},
+		{
+			Path:    "another.go",
+			Search:  "version 0.1.0",
+			Replace: "version 0.2.0",
+		},
+	}
+
+	if !reflect.DeepEqual(conf.Files, want) {
+		t.Errorf("got %#v, wanted %#v", conf.Files, want)
 	}
 }
 

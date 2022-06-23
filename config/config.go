@@ -12,7 +12,9 @@
 package config
 
 import (
+	"bytes"
 	"os"
+	"text/template"
 
 	"github.com/pelletier/go-toml/v2"
 )
@@ -34,16 +36,57 @@ type Config struct {
 	Tag `toml:"tag"` // Top level config
 }
 
-// Load reads in tag's config file.
-func Load(path string) (Config, error) {
-	contents, err := os.ReadFile(path)
-	if err != nil {
-		return Config{}, err
+// Render replaces the special values {{.Current}} and {{.Next}} in the user's
+// configured search and replace directives.
+func (c *Config) Render(current, next string) error {
+	searchTemplate := template.New("search")
+	replaceTemplate := template.New("replace")
+
+	vars := map[string]string{"Current": current, "Next": next}
+	rendered := make([]File, 0, len(c.Files))
+
+	for _, file := range c.Files {
+		searchParsed, err := searchTemplate.Parse(file.Search)
+		if err != nil {
+			return err
+		}
+		replaceParsed, err := replaceTemplate.Parse(file.Replace)
+		if err != nil {
+			return err
+		}
+
+		searchOut := &bytes.Buffer{}
+		replaceOut := &bytes.Buffer{}
+
+		if err := searchParsed.Execute(searchOut, vars); err != nil {
+			return err
+		}
+
+		if err := replaceParsed.Execute(replaceOut, vars); err != nil {
+			return err
+		}
+
+		// Overwrite the originals with the now rendered text
+		file.Search = searchOut.String()
+		file.Replace = replaceOut.String()
+
+		rendered = append(rendered, file)
 	}
 
-	cfg := Config{}
-	if err := toml.Unmarshal(contents, &cfg); err != nil {
-		return Config{}, err
+	c.Files = rendered
+	return nil
+}
+
+// Load reads in tag's config file.
+func Load(path string) (*Config, error) {
+	contents, err := os.ReadFile(path)
+	if err != nil {
+		return &Config{}, err
+	}
+
+	cfg := &Config{}
+	if err := toml.Unmarshal(contents, cfg); err != nil {
+		return &Config{}, err
 	}
 
 	return cfg, nil
