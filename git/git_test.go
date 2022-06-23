@@ -31,7 +31,7 @@ func TestExecCommandHelper(t *testing.T) {
 		return
 	}
 
-	fmt.Fprintf(os.Stdout, os.Getenv("STDOUT"))
+	fmt.Fprint(os.Stdout, os.Getenv("STDOUT"))
 	i, _ := strconv.Atoi(os.Getenv("EXIT_STATUS"))
 	os.Exit(i)
 }
