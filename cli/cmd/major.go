@@ -1,16 +1,12 @@
 package cmd
 
 import (
-	"os"
-
-	"github.com/FollowTheProcess/tag/cli/app"
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 )
 
 // buildMajorCmd builds and returns the tag major CLI subcommand.
 func buildMajorCmd() *cobra.Command {
-	tag := app.New(os.Stdout)
 	var (
 		force   bool
 		push    bool
@@ -44,7 +40,7 @@ func buildMajorCmd() *cobra.Command {
 		$ tag major --message "my custom tag message"
 		`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return tag.Major(force, push, message)
+			return tagApp.Major(force, push, message)
 		},
 	}
 

@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/FollowTheProcess/tag/cli/app"
+	"github.com/FollowTheProcess/tag/config"
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -15,11 +16,11 @@ var (
 	version     = "dev"                                // tag version, set at compile time by ldflags
 	commit      = ""                                   // tag commit hash, set at compile time by ldflags
 	headerStyle = color.New(color.FgWhite, color.Bold) // Setting header style to use in usage message (usage.go)
+	tagApp      = app.New(os.Stdout, config.Path)      // The tag app instance, initialised once and shared between all files in this pkg
 )
 
 // BuildRootCmd builds and returns the root tag CLI command.
 func BuildRootCmd() *cobra.Command {
-	tag := app.New(os.Stdout)
 	rootCmd := &cobra.Command{
 		Use:           "tag <subcommand> [flags]",
 		Version:       version,
@@ -41,7 +42,7 @@ func BuildRootCmd() *cobra.Command {
 		$ tag [patch | minor | major]
 		`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return tag.List()
+			return tagApp.List()
 		},
 	}
 

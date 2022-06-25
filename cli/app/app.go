@@ -5,22 +5,51 @@ package app
 import (
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 
 	"github.com/FollowTheProcess/msg"
+	"github.com/FollowTheProcess/tag/config"
 	"github.com/FollowTheProcess/tag/git"
 )
 
 // App represents the tag program.
 type App struct {
-	Out     io.Writer    // Where to write output to
-	Printer *msg.Printer // The app's printer
+	Out     io.Writer      // Where to write output to
+	Printer *msg.Printer   // The app's printer
+	Config  *config.Config // The tag config
+	Replace bool           // Whether or not we want to do search and replace
 }
 
-// New creates and returns a new app.
-func New(out io.Writer) *App {
+// New creates and returns a new app writing to 'out'
+// and using the config file at 'path', if the config file
+// does not exist, app.Replace will be false.
+func New(out io.Writer, path string) *App {
 	printer := msg.Default()
 	printer.Out = out
+
 	app := &App{Out: out, Printer: printer}
+
+	cwd, err := os.Getwd()
+	if err != nil {
+		// Don't really like panicking but if we can't
+		// even get the cwd it's probably the only thing to do
+		// as New can't return an error
+		panic(err)
+	}
+
+	path = filepath.Join(cwd, path)
+
+	cfg, err := config.Load(path)
+	if err != nil {
+		app.Printer.Warnf("No config file at %s", path)
+		app.Replace = false
+	} else {
+		app.Printer.Infof("Config file %s found and loaded", path)
+		app.Config = cfg
+		app.Replace = true
+	}
+
 	return app
 }
 
