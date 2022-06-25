@@ -19,6 +19,8 @@ import (
 	"github.com/pelletier/go-toml/v2"
 )
 
+const Path = ".tag.toml" // The canonical config file path (relative to cwd).
+
 // File represents a file that tag should perform replacement on.
 type File struct {
 	Path    string `toml:"path"`    // The path to the file (relative to .tag.toml)
@@ -81,12 +83,12 @@ func (c *Config) Render(current, next string) error {
 func Load(path string) (*Config, error) {
 	contents, err := os.ReadFile(path)
 	if err != nil {
-		return &Config{}, err
+		return nil, err
 	}
 
 	cfg := &Config{}
 	if err := toml.Unmarshal(contents, cfg); err != nil {
-		return &Config{}, err
+		return nil, err
 	}
 
 	return cfg, nil

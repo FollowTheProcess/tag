@@ -1,16 +1,12 @@
 package cmd
 
 import (
-	"os"
-
-	"github.com/FollowTheProcess/tag/cli/app"
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 )
 
 // buildMinorCmd builds and returns the tag minor CLI subcommand.
 func buildMinorCmd() *cobra.Command {
-	tag := app.New(os.Stdout)
 	var (
 		force   bool
 		push    bool
@@ -44,7 +40,7 @@ func buildMinorCmd() *cobra.Command {
 		$ tag minor --message "my custom tag message"
 		`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return tag.Minor(force, push, message)
+			return tagApp.Minor(force, push, message)
 		},
 	}
 

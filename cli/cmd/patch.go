@@ -1,16 +1,12 @@
 package cmd
 
 import (
-	"os"
-
-	"github.com/FollowTheProcess/tag/cli/app"
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 )
 
 // buildPatchCmd builds and returns the tag patch CLI subcommand.
 func buildPatchCmd() *cobra.Command {
-	tag := app.New(os.Stdout)
 	var (
 		force   bool
 		push    bool
@@ -44,7 +40,7 @@ func buildPatchCmd() *cobra.Command {
 		$ tag patch --message "my custom tag message"
 		`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return tag.Patch(force, push, message)
+			return tagApp.Patch(force, push, message)
 		},
 	}
 
