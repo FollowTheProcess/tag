@@ -18,9 +18,12 @@ import (
 )
 
 const (
-	major = "major"
-	minor = "minor"
-	patch = "patch"
+	major  = "major"
+	minor  = "minor"
+	patch  = "patch"
+	master = "master"
+	main   = "main"
+	trunk  = "trunk"
 )
 
 var errAbort = errors.New("Aborted")
@@ -100,9 +103,44 @@ func (a *App) Latest() error {
 	return nil
 }
 
+// EnsureGitRepo returns an error if tag is invoked outside
+// of a git repo (other than --help or --version).
+func (a *App) EnsureGitRepo() error {
+	if !git.IsRepo() {
+		return errors.New("Not inside a git repo")
+	}
+	return nil
+}
+
+// ensureBumpableState returns an error if the working tree
+// is dirty or we're not on a branch called master, main, or trunk.
+func (a *App) ensureBumpableState() error {
+	dirty, err := git.IsDirty()
+	if err != nil {
+		return err
+	}
+
+	if dirty {
+		return errors.New("Working tree is not clean")
+	}
+
+	branch, err := git.Branch()
+	if err != nil {
+		return err
+	}
+
+	if (branch != main) && (branch != master) && (branch != trunk) {
+		return fmt.Errorf("Must be on branch {main | master | trunk} to bump a version, currently on %s", branch)
+	}
+	return nil
+}
+
 // bump is the generic bump function, that holds a lot of shared setup
 // and dispatches to the correct type.
 func (a *App) bump(typ, message string, force, push bool) error {
+	if err := a.ensureBumpableState(); err != nil {
+		return err
+	}
 	latest, err := git.LatestTag()
 	if err != nil {
 		return err
@@ -141,31 +179,38 @@ func (a *App) bump(typ, message string, force, push bool) error {
 		return errAbort
 	}
 
-	var stdout string
+	if err := a.doBump(current, next, message, push); err != nil {
+		return err
+	}
 
-	// If we get here user either passed --force or confirmed when asked
+	a.printer.Good("Done")
+	return nil
+}
+
+// doBump is a helper that actually does the bumping (including any replacing).
+func (a *App) doBump(current, next version.Version, message string, push bool) error {
 	if a.replace {
-		if err = a.config.Render(current.String(), next.String()); err != nil {
+		if err := a.config.Render(current.String(), next.String()); err != nil {
 			return err
 		}
 		for _, file := range a.config.Files {
 			// TODO: If there are multiple entries for the same file, this will open
 			// and close it multiple times which is not ideal
-			err = replacer.Replace(file.Path, file.Search, file.Replace)
+			err := replacer.Replace(file.Path, file.Search, file.Replace)
 			if err != nil {
 				return err
 			}
 		}
-		if err = git.Add(); err != nil {
+		if err := git.Add(); err != nil {
 			return err
 		}
-		stdout, err = git.Commit(fmt.Sprintf("Bump version %s -> %s", current.String(), next.String()))
+		stdout, err := git.Commit(fmt.Sprintf("Bump version %s -> %s", current.String(), next.String()))
 		if err != nil {
 			return errors.New(stdout)
 		}
 	}
 
-	stdout, err = git.CreateTag(next.Tag(), message)
+	stdout, err := git.CreateTag(next.Tag(), message)
 	if err != nil {
 		return errors.New(stdout)
 	}
@@ -185,7 +230,5 @@ func (a *App) bump(typ, message string, force, push bool) error {
 			return errors.New(stdout)
 		}
 	}
-
-	a.printer.Good("Done")
 	return nil
 }

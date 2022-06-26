@@ -357,7 +357,7 @@ func TestIsRepo(t *testing.T) {
 			gitCommand = fakeExecCommand
 			defer func() { gitCommand = exec.Command }()
 
-			if got := IsRepo("."); got != tt.want {
+			if got := IsRepo(); got != tt.want {
 				t.Errorf("IsRepo returned %v, wanted %v", got, tt.want)
 			}
 		})

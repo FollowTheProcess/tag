@@ -41,6 +41,9 @@ func BuildRootCmd() *cobra.Command {
 		# Bump a semantic version
 		$ tag [patch | minor | major]
 		`),
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			return tagApp.EnsureGitRepo()
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return tagApp.List()
 		},

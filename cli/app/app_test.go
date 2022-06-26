@@ -50,7 +50,7 @@ func setup(t *testing.T) (string, func()) {
 	gitConfigName := exec.Command("git", "config", "--local", "user.name", "Tag Test")
 	gitConfigName.Dir = tmp
 
-	init := exec.Command("git", "init")
+	init := exec.Command("git", "init", "--initial-branch=main")
 	init.Dir = tmp
 
 	add := exec.Command("git", "add", "-A")
