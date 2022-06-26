@@ -79,7 +79,7 @@ func CreateTag(tag, message string) (string, error) {
 }
 
 // IsRepo detects whether or not we are currently in a git repo.
-func IsRepo(cwd string) bool {
+func IsRepo() bool {
 	cmd := gitCommand("git", "rev-parse", "--is-inside-work-tree")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
