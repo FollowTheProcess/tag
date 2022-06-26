@@ -57,7 +57,6 @@ func New(out io.Writer, path string) *App {
 
 	cfg, err := config.Load(path)
 	if err != nil {
-		app.printer.Warnf("No config file at %s", path)
 		app.replace = false
 	} else {
 		app.printer.Infof("Config file %s found and loaded", path)
