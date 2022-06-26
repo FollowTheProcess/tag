@@ -425,6 +425,27 @@ func TestBranch(t *testing.T) {
 			want:    "main",
 			wantErr: false,
 		},
+		{
+			name:    "master",
+			stdout:  "master",
+			status:  0,
+			want:    "master",
+			wantErr: false,
+		},
+		{
+			name:    "trunk",
+			stdout:  "trunk",
+			status:  0,
+			want:    "trunk",
+			wantErr: false,
+		},
+		{
+			name:    "bad",
+			stdout:  "bad",
+			status:  1,
+			want:    "bad",
+			wantErr: true,
+		},
 	}
 
 	for _, tt := range tests {
