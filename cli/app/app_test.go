@@ -57,19 +57,19 @@ func setup(t *testing.T) (string, func()) {
 		t.Fatalf("Error initialising test git repo: %v", err)
 	}
 
-	err = add.Run()
+	stdout, err := add.CombinedOutput()
 	if err != nil {
-		t.Fatalf("Error adding files to test git repo: %v", err)
+		t.Fatalf("Error adding files to test git repo: %s", string(stdout))
 	}
 
-	err = commit.Run()
+	stdout, err = commit.CombinedOutput()
 	if err != nil {
-		t.Fatalf("Error committing to the test git repo: %v", err)
+		t.Fatalf("Error committing to the test git repo: %s", string(stdout))
 	}
 
-	err = firstTag.Run()
+	stdout, err = firstTag.CombinedOutput()
 	if err != nil {
-		t.Fatalf("Error issuing the first tag to test git repo: %v", err)
+		t.Fatalf("Error issuing the first tag to test git repo: %s", string(stdout))
 	}
 
 	tearDown := func() { os.RemoveAll(tmp) }
