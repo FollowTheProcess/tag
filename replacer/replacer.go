@@ -17,7 +17,7 @@ func Replace(path, search, replace string) error {
 	}
 
 	if !bytes.Contains(contents, []byte(search)) {
-		return fmt.Errorf("Could not find %s in %s", search, path)
+		return fmt.Errorf("Could not find %q in %s", search, path)
 	}
 
 	newContent := bytes.ReplaceAll(contents, []byte(search), []byte(replace))

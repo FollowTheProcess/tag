@@ -64,7 +64,7 @@ func LatestTag() (string, error) {
 	if bytes.Contains(out, []byte("fatal: No names found")) {
 		return "", errors.New("No tags found")
 	}
-	return string(out), err
+	return strings.TrimSpace(string(out)), err
 }
 
 // CreateTag creates an annotated git tag with an optional message
