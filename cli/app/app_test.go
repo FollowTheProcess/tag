@@ -2,6 +2,7 @@ package app
 
 import (
 	"bytes"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -94,15 +95,8 @@ func setup(t *testing.T) (string, func()) {
 	return tmp, tearDown
 }
 
-func TestAppPatch(t *testing.T) {
-	tmp, teardown := setup(t)
-	defer teardown()
-
-	err := os.Chdir(tmp)
-	if err != nil {
-		t.Fatalf("Could not change dir to tmp: %v", err)
-	}
-	out := &bytes.Buffer{}
+// newTestApp creates an app set up for testing.
+func newTestApp(out io.Writer) *App {
 	app := &App{
 		Out:     out,
 		Printer: msg.Default(),
@@ -119,6 +113,19 @@ func TestAppPatch(t *testing.T) {
 		},
 		Replace: true,
 	}
+	return app
+}
+
+func TestAppPatch(t *testing.T) {
+	tmp, teardown := setup(t)
+	defer teardown()
+
+	err := os.Chdir(tmp)
+	if err != nil {
+		t.Fatalf("Could not change dir to tmp: %v", err)
+	}
+	out := &bytes.Buffer{}
+	app := newTestApp(out)
 
 	err = app.Patch(false, false, "Message")
 	if err != nil {
@@ -128,5 +135,47 @@ func TestAppPatch(t *testing.T) {
 	wantOut := "force: false\npush: false\nmessage: Message\n"
 	if out.String() != wantOut {
 		t.Errorf("Wrong stdout, got %s, wanted %s", out.String(), wantOut)
+	}
+}
+
+func TestAppLatest(t *testing.T) {
+	tmp, teardown := setup(t)
+	defer teardown()
+
+	err := os.Chdir(tmp)
+	if err != nil {
+		t.Fatalf("Could not change dir to tmp: %v", err)
+	}
+	out := &bytes.Buffer{}
+	app := newTestApp(out)
+
+	err = app.Latest()
+	if err != nil {
+		t.Fatalf("app.Latest returned an error: %v", err)
+	}
+
+	if out.String() != "v0.1.0\n" {
+		t.Errorf("app.Latest incorrect stdout: got %q, wanted %q", out.String(), "v0.1.0\n")
+	}
+}
+
+func TestAppList(t *testing.T) {
+	tmp, teardown := setup(t)
+	defer teardown()
+
+	err := os.Chdir(tmp)
+	if err != nil {
+		t.Fatalf("Could not change dir to tmp: %v", err)
+	}
+	out := &bytes.Buffer{}
+	app := newTestApp(out)
+
+	err = app.List()
+	if err != nil {
+		t.Fatalf("app.List returned an error: %v", err)
+	}
+
+	if out.String() != "v0.1.0\n" {
+		t.Errorf("app.List incorrect stdout: got %q, wanted %q", out.String(), "v0.1.0\n")
 	}
 }
