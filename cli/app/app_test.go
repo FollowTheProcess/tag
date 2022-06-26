@@ -11,6 +11,13 @@ import (
 	"github.com/FollowTheProcess/tag/config"
 )
 
+// setup creates a tempdir, initialises a git repo with a README to do
+// search and replace on, adds an initial tag v0.1.0 as well as a tag config
+// returns the path to the root of the test repo as well as a teardown
+// function that removes the entire directory at the end of the test.
+// Usage in a test would be:
+//  tmp, teardown := setup(t)
+//  defer teardown()
 func setup(t *testing.T) (string, func()) {
 	t.Helper()
 	tmp, err := os.MkdirTemp("", "test")
@@ -88,8 +95,8 @@ func setup(t *testing.T) (string, func()) {
 }
 
 func TestAppPatch(t *testing.T) {
-	tmp, tearDown := setup(t)
-	defer tearDown()
+	tmp, teardown := setup(t)
+	defer teardown()
 
 	err := os.Chdir(tmp)
 	if err != nil {
