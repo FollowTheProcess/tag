@@ -3,22 +3,34 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/FollowTheProcess/msg"
 	"github.com/FollowTheProcess/tag/config"
 	"github.com/FollowTheProcess/tag/git"
+	"github.com/FollowTheProcess/tag/replacer"
+	"github.com/FollowTheProcess/tag/version"
 )
+
+const (
+	major = "major"
+	minor = "minor"
+	patch = "patch"
+)
+
+var errAbort = errors.New("Aborted")
 
 // App represents the tag program.
 type App struct {
-	Out     io.Writer      // Where to write output to
-	Printer *msg.Printer   // The app's printer
-	Config  *config.Config // The tag config
-	Replace bool           // Whether or not we want to do search and replace
+	out     io.Writer      // Where to write output to
+	printer *msg.Printer   // The app's printer
+	config  *config.Config // The tag config
+	replace bool           // Whether or not we want to do search and replace
 }
 
 // New creates and returns a new app writing to 'out'
@@ -28,7 +40,7 @@ func New(out io.Writer, path string) *App {
 	printer := msg.Default()
 	printer.Out = out
 
-	app := &App{Out: out, Printer: printer}
+	app := &App{out: out, printer: printer}
 
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -42,12 +54,12 @@ func New(out io.Writer, path string) *App {
 
 	cfg, err := config.Load(path)
 	if err != nil {
-		app.Printer.Warnf("No config file at %s", path)
-		app.Replace = false
+		app.printer.Warnf("No config file at %s", path)
+		app.replace = false
 	} else {
-		app.Printer.Infof("Config file %s found and loaded", path)
-		app.Config = cfg
-		app.Replace = true
+		app.printer.Infof("Config file %s found and loaded", path)
+		app.config = cfg
+		app.replace = true
 	}
 
 	return app
@@ -55,26 +67,17 @@ func New(out io.Writer, path string) *App {
 
 // Patch is the tag patch subcommand.
 func (a *App) Patch(force, push bool, message string) error {
-	fmt.Fprintf(a.Out, "force: %v\n", force)
-	fmt.Fprintf(a.Out, "push: %v\n", push)
-	fmt.Fprintf(a.Out, "message: %s\n", message)
-	return nil
+	return a.bump(patch, message, force, push)
 }
 
 // Minor is the tag minor subcommand.
 func (a *App) Minor(force, push bool, message string) error {
-	fmt.Fprintf(a.Out, "force: %v\n", force)
-	fmt.Fprintf(a.Out, "push: %v\n", push)
-	fmt.Fprintf(a.Out, "message: %s\n", message)
-	return nil
+	return a.bump(minor, message, force, push)
 }
 
 // Major is the tag major subcommand.
 func (a *App) Major(force, push bool, message string) error {
-	fmt.Fprintf(a.Out, "force: %v\n", force)
-	fmt.Fprintf(a.Out, "push: %v\n", push)
-	fmt.Fprintf(a.Out, "message: %s\n", message)
-	return nil
+	return a.bump(major, message, force, push)
 }
 
 // List is what happens when tag is invoked with no subcommands.
@@ -83,7 +86,7 @@ func (a *App) List() error {
 	if err != nil {
 		return err
 	}
-	fmt.Fprint(a.Out, list)
+	fmt.Fprint(a.out, list)
 	return nil
 }
 
@@ -93,6 +96,96 @@ func (a *App) Latest() error {
 	if err != nil {
 		return err
 	}
-	fmt.Fprint(a.Out, latest)
+	fmt.Fprintln(a.out, latest)
+	return nil
+}
+
+// bump is the generic bump function, that holds a lot of shared setup
+// and dispatches to the correct type.
+func (a *App) bump(typ, message string, force, push bool) error {
+	latest, err := git.LatestTag()
+	if err != nil {
+		return err
+	}
+	current, err := version.Parse(latest)
+	if err != nil {
+		return err
+	}
+
+	var next version.Version
+
+	switch typ {
+	case major:
+		next = version.BumpMajor(current)
+	case minor:
+		next = version.BumpMinor(current)
+	case patch:
+		next = version.BumpPatch(current)
+	default:
+		panic("unreachable")
+	}
+
+	if !force {
+		confirm := &survey.Confirm{
+			Message: fmt.Sprintf("This will bump %q to %q. Are you sure?", current, next),
+			Default: false,
+		}
+		err = survey.AskOne(confirm, &force)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Now if force is false, the user said no -> abort
+	if !force {
+		return errAbort
+	}
+
+	var stdout string
+
+	// If we get here user either passed --force or confirmed when asked
+	if a.replace {
+		if err = a.config.Render(current.String(), next.String()); err != nil {
+			return err
+		}
+		for _, file := range a.config.Files {
+			// TODO: If there are multiple entries for the same file, this will open
+			// and close it multiple times which is not ideal
+			err = replacer.Replace(file.Path, file.Search, file.Replace)
+			if err != nil {
+				return err
+			}
+		}
+		if err = git.Add(); err != nil {
+			return err
+		}
+		stdout, err = git.Commit(fmt.Sprintf("Bump version %s -> %s", current.String(), next.String()))
+		if err != nil {
+			return errors.New(stdout)
+		}
+	}
+
+	stdout, err = git.CreateTag(next.Tag(), message)
+	if err != nil {
+		return errors.New(stdout)
+	}
+
+	// If push, push the tag
+	if push {
+		if a.replace {
+			a.printer.Info("Pushing bump commit")
+			stdout, err = git.Push()
+			if err != nil {
+				return errors.New(stdout)
+			}
+		}
+		a.printer.Infof("Pushing tag %s", next.Tag())
+		stdout, err = git.PushTag(next.Tag())
+		if err != nil {
+			return errors.New(stdout)
+		}
+	}
+
+	a.printer.Good("Done")
 	return nil
 }

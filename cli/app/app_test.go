@@ -6,10 +6,12 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/FollowTheProcess/msg"
 	"github.com/FollowTheProcess/tag/config"
+	"github.com/FollowTheProcess/tag/git"
 )
 
 // setup creates a tempdir, initialises a git repo with a README to do
@@ -33,7 +35,7 @@ func setup(t *testing.T) (string, func()) {
 	cfg := []byte(`
 	[tag]
 	files = [
-		{ path = "README.md", search = "version = {{.Current}}", replace = "version = {{.Next}}" },
+		{ path = "README.md", search = "version {{.Current}}", replace = "version {{.Next}}" },
 	]
 	`)
 
@@ -98,20 +100,20 @@ func setup(t *testing.T) (string, func()) {
 // newTestApp creates an app set up for testing.
 func newTestApp(out io.Writer) *App {
 	app := &App{
-		Out:     out,
-		Printer: msg.Default(),
-		Config: &config.Config{
+		out:     out,
+		printer: msg.Default(),
+		config: &config.Config{
 			Tag: config.Tag{
 				Files: []config.File{
 					{
 						Path:    "README.md",
-						Search:  "version = {{.Current}}",
-						Replace: "version = {{.Next}}",
+						Search:  "version {{.Current}}",
+						Replace: "version {{.Next}}",
 					},
 				},
 			},
 		},
-		Replace: true,
+		replace: true,
 	}
 	return app
 }
@@ -127,14 +129,163 @@ func TestAppPatch(t *testing.T) {
 	out := &bytes.Buffer{}
 	app := newTestApp(out)
 
-	err = app.Patch(false, false, "Message")
+	err = app.Patch(true, false, "Message")
 	if err != nil {
 		t.Fatalf("app.Patch returned an error: %v", err)
 	}
 
-	wantOut := "force: false\npush: false\nmessage: Message\n"
-	if out.String() != wantOut {
-		t.Errorf("Wrong stdout, got %s, wanted %s", out.String(), wantOut)
+	// Check that it's replaced the README contents
+	readme, err := os.ReadFile("README.md")
+	if err != nil {
+		t.Fatalf("Could not read from replaced README: %v", err)
+	}
+	want := "Hello, version 0.1.1"
+
+	if string(readme) != want {
+		t.Errorf("README replaced incorrectly: got %q, wanted %q", string(readme), want)
+	}
+
+	// Check it's made the appropriate commit
+	gitLog := exec.Command("git", "log", "--oneline")
+	stdout, err := gitLog.CombinedOutput()
+	if err != nil {
+		t.Fatalf("Error getting git log: %s", string(stdout))
+	}
+
+	if !strings.Contains(string(stdout), "Bump version 0.1.0 -> 0.1.1") {
+		t.Errorf("Expected bump version commit not found in git log: %s", string(stdout))
+	}
+
+	// Check the working tree is clean
+	dirty, err := git.IsDirty()
+	if err != nil {
+		t.Fatalf("git.IsDirty returned an error: %v", err)
+	}
+	if dirty {
+		t.Error("Working tree was left dirty after replacing files")
+	}
+
+	// Check the latest tag is correct
+	latest, err := git.LatestTag()
+	if err != nil {
+		t.Errorf("Could not get latest tag: %v", err)
+	}
+	if latest != "v0.1.1" {
+		t.Errorf("Wrong latest tag: got %s, wanted %s", latest, "v0.1.1")
+	}
+}
+
+func TestAppMinor(t *testing.T) {
+	tmp, teardown := setup(t)
+	defer teardown()
+
+	err := os.Chdir(tmp)
+	if err != nil {
+		t.Fatalf("Could not change dir to tmp: %v", err)
+	}
+	out := &bytes.Buffer{}
+	app := newTestApp(out)
+
+	err = app.Minor(true, false, "Message")
+	if err != nil {
+		t.Fatalf("app.Minor returned an error: %v", err)
+	}
+
+	// Check that it's replaced the README contents
+	readme, err := os.ReadFile("README.md")
+	if err != nil {
+		t.Fatalf("Could not read from replaced README: %v", err)
+	}
+	want := "Hello, version 0.2.0"
+
+	if string(readme) != want {
+		t.Errorf("README replaced incorrectly: got %q, wanted %q", string(readme), want)
+	}
+
+	// Check it's made the appropriate commit
+	gitLog := exec.Command("git", "log", "--oneline")
+	stdout, err := gitLog.CombinedOutput()
+	if err != nil {
+		t.Fatalf("Error getting git log: %s", string(stdout))
+	}
+
+	if !strings.Contains(string(stdout), "Bump version 0.1.0 -> 0.2.0") {
+		t.Errorf("Expected bump version commit not found in git log: %s", string(stdout))
+	}
+
+	// Check the working tree is clean
+	dirty, err := git.IsDirty()
+	if err != nil {
+		t.Fatalf("git.IsDirty returned an error: %v", err)
+	}
+	if dirty {
+		t.Error("Working tree was left dirty after replacing files")
+	}
+
+	// Check the latest tag is correct
+	latest, err := git.LatestTag()
+	if err != nil {
+		t.Errorf("Could not get latest tag: %v", err)
+	}
+	if latest != "v0.2.0" {
+		t.Errorf("Wrong latest tag: got %s, wanted %s", latest, "v0.2.0")
+	}
+}
+
+func TestAppMajor(t *testing.T) {
+	tmp, teardown := setup(t)
+	defer teardown()
+
+	err := os.Chdir(tmp)
+	if err != nil {
+		t.Fatalf("Could not change dir to tmp: %v", err)
+	}
+	out := &bytes.Buffer{}
+	app := newTestApp(out)
+
+	err = app.Major(true, false, "Message")
+	if err != nil {
+		t.Fatalf("app.Major returned an error: %v", err)
+	}
+
+	// Check that it's replaced the README contents
+	readme, err := os.ReadFile("README.md")
+	if err != nil {
+		t.Fatalf("Could not read from replaced README: %v", err)
+	}
+	want := "Hello, version 1.0.0"
+
+	if string(readme) != want {
+		t.Errorf("README replaced incorrectly: got %q, wanted %q", string(readme), want)
+	}
+
+	// Check it's made the appropriate commit
+	gitLog := exec.Command("git", "log", "--oneline")
+	stdout, err := gitLog.CombinedOutput()
+	if err != nil {
+		t.Fatalf("Error getting git log: %s", string(stdout))
+	}
+
+	if !strings.Contains(string(stdout), "Bump version 0.1.0 -> 1.0.0") {
+		t.Errorf("Expected bump version commit not found in git log: %s", string(stdout))
+	}
+
+	// Check the working tree is clean
+	dirty, err := git.IsDirty()
+	if err != nil {
+		t.Fatalf("git.IsDirty returned an error: %v", err)
+	}
+	if dirty {
+		t.Error("Working tree was left dirty after replacing files")
+	}
+
+	// Check the latest tag is correct
+	latest, err := git.LatestTag()
+	if err != nil {
+		t.Errorf("Could not get latest tag: %v", err)
+	}
+	if latest != "v1.0.0" {
+		t.Errorf("Wrong latest tag: got %s, wanted %s", latest, "v1.0.0")
 	}
 }
 
