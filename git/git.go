@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"errors"
 	"os/exec"
+	"strings"
 )
 
 // gitCommand is an internal reassignment of exec.Command so we
@@ -23,6 +24,26 @@ func Commit(message string) (string, error) {
 func Add() error {
 	cmd := gitCommand("git", "add", "-A")
 	return cmd.Run()
+}
+
+// Push performs a git push to the configured remote.
+func Push() (string, error) {
+	cmd := gitCommand("git", "push")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return string(out), err
+	}
+	return string(out), nil
+}
+
+// PushTag pushes a certain tag to the configured remote.
+func PushTag(tag string) (string, error) {
+	cmd := gitCommand("git", "push", "origin", tag)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return string(out), err
+	}
+	return string(out), nil
 }
 
 // ListTags lists all tags in descending order (latest at the top).
@@ -59,7 +80,6 @@ func CreateTag(tag, message string) (string, error) {
 
 // IsRepo detects whether or not we are currently in a git repo.
 func IsRepo(cwd string) bool {
-	// git rev-parse --is-inside-work-tree
 	cmd := gitCommand("git", "rev-parse", "--is-inside-work-tree")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -69,4 +89,28 @@ func IsRepo(cwd string) bool {
 		return false
 	}
 	return true
+}
+
+// Branch gets the name of the current git branch.
+func Branch() (string, error) {
+	cmd := gitCommand("git", "rev-parse", "--abbrev-ref", "HEAD")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return string(out), err
+	}
+	return strings.TrimSpace(string(out)), nil
+}
+
+// IsDirty checks whether or not the working tree is dirty.
+func IsDirty() (bool, error) {
+	cmd := gitCommand("git", "status", "--porcelain")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return false, err
+	}
+	status := strings.TrimSpace(string(out))
+	if len(status) > 1 {
+		return true, nil
+	}
+	return false, nil
 }

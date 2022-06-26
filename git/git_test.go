@@ -112,6 +112,86 @@ func TestAdd(t *testing.T) {
 	}
 }
 
+func TestPush(t *testing.T) {
+	tests := []struct {
+		name    string
+		stdout  string
+		status  int
+		wantErr bool
+	}{
+		{
+			name:    "happy",
+			stdout:  "success",
+			status:  0,
+			wantErr: false,
+		},
+		{
+			name:    "sad",
+			stdout:  "I failed!",
+			status:  1,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockExitStatus = tt.status
+			mockStdout = tt.stdout
+			gitCommand = fakeExecCommand
+			defer func() { gitCommand = exec.Command }()
+
+			out, err := Push()
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("Push() returned %v, wanted %v", err, tt.wantErr)
+			}
+
+			if out != tt.stdout {
+				t.Errorf("Push stdout was %q, wanted %q", out, tt.stdout)
+			}
+		})
+	}
+}
+
+func TestPushTag(t *testing.T) {
+	tests := []struct {
+		name    string
+		stdout  string
+		status  int
+		wantErr bool
+	}{
+		{
+			name:    "happy",
+			stdout:  "success",
+			status:  0,
+			wantErr: false,
+		},
+		{
+			name:    "sad",
+			stdout:  "I failed!",
+			status:  1,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockExitStatus = tt.status
+			mockStdout = tt.stdout
+			gitCommand = fakeExecCommand
+			defer func() { gitCommand = exec.Command }()
+
+			out, err := PushTag("v1.2.3")
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("PushTag() returned %v, wanted %v", err, tt.wantErr)
+			}
+
+			if out != tt.stdout {
+				t.Errorf("PushTag stdout was %q, wanted %q", out, tt.stdout)
+			}
+		})
+	}
+}
+
 func TestListTags(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -279,6 +359,88 @@ func TestIsRepo(t *testing.T) {
 
 			if got := IsRepo("."); got != tt.want {
 				t.Errorf("IsRepo returned %v, wanted %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestIsDirty(t *testing.T) {
+	tests := []struct {
+		name    string
+		stdout  string
+		status  int
+		want    bool
+		wantErr bool
+	}{
+		{
+			name: "yes",
+			stdout: `
+			M git/git.go
+			M git_git_test.go
+			`,
+			status:  0,
+			want:    true,
+			wantErr: false,
+		},
+		{
+			name:    "no",
+			stdout:  "",
+			status:  0,
+			want:    false,
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockExitStatus = tt.status
+			mockStdout = tt.stdout
+			gitCommand = fakeExecCommand
+			defer func() { gitCommand = exec.Command }()
+
+			got, err := IsDirty()
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("IsDirty() returned %v, wanted %v", err, tt.wantErr)
+			}
+
+			if got != tt.want {
+				t.Errorf("IsDirty returned %v, wanted %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestBranch(t *testing.T) {
+	tests := []struct {
+		name    string
+		stdout  string
+		want    string
+		status  int
+		wantErr bool
+	}{
+		{
+			name:    "main",
+			stdout:  "main",
+			status:  0,
+			want:    "main",
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockExitStatus = tt.status
+			mockStdout = tt.stdout
+			gitCommand = fakeExecCommand
+			defer func() { gitCommand = exec.Command }()
+
+			got, err := Branch()
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("Branch() returned %v, wanted %v", err, tt.wantErr)
+			}
+
+			if got != tt.want {
+				t.Errorf("Branch() returned %s, wanted %s", got, tt.want)
 			}
 		})
 	}
