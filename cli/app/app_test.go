@@ -11,12 +11,6 @@ import (
 	"github.com/FollowTheProcess/tag/config"
 )
 
-// Set up a tmp dir
-// populate it with some random files and folders
-// git init, add, and commit
-// Tag some stuff
-// test the apps methods
-
 func setup(t *testing.T) (string, func()) {
 	t.Helper()
 	tmp, err := os.MkdirTemp("", "test")
@@ -40,6 +34,12 @@ func setup(t *testing.T) (string, func()) {
 		t.Fatalf("Could not create .tag.toml: %v", err)
 	}
 
+	gitConfigEmail := exec.Command("git", "config", "--local", "user.email", "tagtest@gmail.com")
+	gitConfigEmail.Dir = tmp
+
+	gitConfigName := exec.Command("git", "config", "--local", "user.name", "Tag Test")
+	gitConfigName.Dir = tmp
+
 	init := exec.Command("git", "init")
 	init.Dir = tmp
 
@@ -60,6 +60,16 @@ func setup(t *testing.T) (string, func()) {
 	stdout, err := add.CombinedOutput()
 	if err != nil {
 		t.Fatalf("Error adding files to test git repo: %s", string(stdout))
+	}
+
+	stdout, err = gitConfigEmail.CombinedOutput()
+	if err != nil {
+		t.Fatalf("git config user.email returned an error: %s", string(stdout))
+	}
+
+	stdout, err = gitConfigName.CombinedOutput()
+	if err != nil {
+		t.Fatalf("git config user.name returned an error: %s", string(stdout))
 	}
 
 	stdout, err = commit.CombinedOutput()
