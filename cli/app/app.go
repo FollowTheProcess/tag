@@ -55,25 +55,25 @@ func New(out io.Writer, path string) *App {
 
 // Patch is the tag patch subcommand.
 func (a *App) Patch(force, push bool, message string) error {
-	fmt.Printf("force: %v\n", force)
-	fmt.Printf("push: %v\n", push)
-	fmt.Printf("message: %s\n", message)
+	fmt.Fprintf(a.Out, "force: %v\n", force)
+	fmt.Fprintf(a.Out, "push: %v\n", push)
+	fmt.Fprintf(a.Out, "message: %s\n", message)
 	return nil
 }
 
 // Minor is the tag minor subcommand.
 func (a *App) Minor(force, push bool, message string) error {
-	fmt.Printf("force: %v\n", force)
-	fmt.Printf("push: %v\n", push)
-	fmt.Printf("message: %s\n", message)
+	fmt.Fprintf(a.Out, "force: %v\n", force)
+	fmt.Fprintf(a.Out, "push: %v\n", push)
+	fmt.Fprintf(a.Out, "message: %s\n", message)
 	return nil
 }
 
 // Major is the tag major subcommand.
 func (a *App) Major(force, push bool, message string) error {
-	fmt.Printf("force: %v\n", force)
-	fmt.Printf("push: %v\n", push)
-	fmt.Printf("message: %s\n", message)
+	fmt.Fprintf(a.Out, "force: %v\n", force)
+	fmt.Fprintf(a.Out, "push: %v\n", push)
+	fmt.Fprintf(a.Out, "message: %s\n", message)
 	return nil
 }
 
