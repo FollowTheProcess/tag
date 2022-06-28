@@ -9,9 +9,10 @@ import (
 	"strings"
 )
 
-// gitCommand is an internal reassignment of exec.Command so we
-// can mock it out during testing.
-var gitCommand = exec.Command
+var (
+	gitCommand     = exec.Command                // An internal reassignment of exec.Command for testing
+	ErrNoTagsFound = errors.New("No tags found") // ErrNoTagsFound is the signal that the current repo has no tags
+)
 
 // Commit performs a git commit with a message.
 func Commit(message string) (string, error) {
@@ -52,7 +53,7 @@ func ListTags() (string, error) {
 	cmd := gitCommand("git", "tag", "--sort=-version:refname")
 	out, err := cmd.CombinedOutput()
 	if bytes.Equal(out, []byte("")) {
-		return "", errors.New("No tags found")
+		return "", ErrNoTagsFound
 	}
 	return string(out), err
 }
@@ -62,7 +63,7 @@ func LatestTag() (string, error) {
 	cmd := gitCommand("git", "describe", "--tags", "--abbrev=0")
 	out, err := cmd.CombinedOutput()
 	if bytes.Contains(out, []byte("fatal: No names found")) {
-		return "", errors.New("No tags found")
+		return "", ErrNoTagsFound
 	}
 	return strings.TrimSpace(string(out)), err
 }
