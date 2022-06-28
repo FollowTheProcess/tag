@@ -195,6 +195,7 @@ func (a *App) doBump(current, next version.Version, message string, push bool) e
 		for _, file := range a.config.Files {
 			// TODO: If there are multiple entries for the same file, this will open
 			// and close it multiple times which is not ideal
+			a.printer.Infof("Replacing contents in %s", file.Path)
 			err := replacer.Replace(file.Path, file.Search, file.Replace)
 			if err != nil {
 				return err
@@ -203,12 +204,14 @@ func (a *App) doBump(current, next version.Version, message string, push bool) e
 		if err := git.Add(); err != nil {
 			return err
 		}
+		a.printer.Info("Committing changes")
 		stdout, err := git.Commit(fmt.Sprintf("Bump version %s -> %s", current.String(), next.String()))
 		if err != nil {
 			return errors.New(stdout)
 		}
 	}
 
+	a.printer.Infof("Issuing new tag %s", next.Tag())
 	stdout, err := git.CreateTag(next.Tag(), message)
 	if err != nil {
 		return errors.New(stdout)
