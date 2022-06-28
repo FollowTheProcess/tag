@@ -142,7 +142,13 @@ func (a *App) bump(typ, message string, force, push bool) error {
 	}
 	latest, err := git.LatestTag()
 	if err != nil {
-		return err
+		if errors.Is(err, git.ErrNoTagsFound) {
+			// No tags, set latest to a new zero version so bumping works as expected
+			// if the repo has no tags yet
+			latest = "v0.0.0"
+		} else {
+			return err
+		}
 	}
 	current, err := version.Parse(latest)
 	if err != nil {
