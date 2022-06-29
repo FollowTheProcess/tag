@@ -41,9 +41,73 @@ There are compiled executables for mac, linux and windows in the GitHub releases
 There is also a [homebrew] tap:
 
 ```shell
-brew tap FollowTheProcess/homebrew-tap
-
 brew install FollowTheProcess/homebrew-tap/tag
+```
+
+## Usage
+
+Tag has 2 modes of operating, one in which it doesn't find a config file in the current directory (`.tag.toml`), and one where it does. Let's start with the first mode.
+
+### No Replace Mode
+
+If there is no config file present in `cwd`, tag will operate in "no replace" mode. This is it's most basic mode and when tag
+is in this mode all you can do with it is list, create, and push new [semver] tags.
+
+For example let's say you're working on a project currently at `v0.23.8` and you've decided you want to signal to the world that your project is stable, it's time for a major version bump! 🚀
+
+Your project also has a CI/CD pipeline where on the push of a new tag it gets compiled and packaged up and a new release gets created.
+
+So you need to create a new tag (`v1.0.0`) and push it. No problem!
+
+```shell
+tag major --push
+```
+
+This will create a new `v1.0.0` annotated git tag, and push it to the configured remote. Job done ✅
+
+### Replace Mode
+
+Now this is already nice but wouldn't it be *even nicer* if you didn't have to manually bump version numbers in project metadata files, or maybe the README:
+
+```markdown
+# My Project Readme
+
+This my project, version = 0.1.0
+```
+
+`tag` can do that too! All you have to do is tell it what to do with which files to work on, enter the `.tag.toml` config file which should be placed in the root of your repo:
+
+```toml
+[tag]
+files = [
+    { path = "README.md", search = "version = {{.Current}}", replace = "version = {{.Next}}" },
+]
+```
+
+Tag uses two special variables `{{.Current}}` and `{{.Next}}` to substitute for the correct versions while bumping as well as the path (relative to `.tag.toml`) of the files you want to change.
+
+So now all you have to do is e.g.
+
+```shell
+tag minor --push
+```
+
+And then tag will:
+
+* Perform search and replace on all occurrences of your search string
+* Stage all the changes in git once the replacing is done
+* Commit the changes with a message like `Bump version 0.1.0 -> 0.2.0`
+* Push the changes
+* Push the new tag
+
+And then your CI/CD pipeline will take care of the rest! 🎉
+
+After bumping, your README will now look like this:
+
+```markdown
+# My Project Readme
+
+This my project, version = 0.2.0
 ```
 
 ## Contributing
