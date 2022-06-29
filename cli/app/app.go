@@ -145,6 +145,7 @@ func (a *App) bump(typ, message string, force, push bool) error {
 		if errors.Is(err, git.ErrNoTagsFound) {
 			// No tags, set latest to a new zero version so bumping works as expected
 			// if the repo has no tags yet
+			a.printer.Warn("No tags found, starting from v0.0.0")
 			latest = "v0.0.0"
 		} else {
 			return err
