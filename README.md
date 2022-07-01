@@ -120,7 +120,7 @@ This my project, version = 0.2.0
 >
 > Ken Thompson
 
-Contributions are very much welcomed but please keep this goal in mind :dart:
+Contributions are very much welcomed but please keep this goal in mind 🎯
 
 `tag` is run as a fairly standard Go project:
 
