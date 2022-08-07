@@ -19,8 +19,9 @@ import (
 // returns the path to the root of the test repo as well as a teardown
 // function that removes the entire directory at the end of the test.
 // Usage in a test would be:
-//  tmp, teardown := setup(t)
-//  defer teardown()
+//
+//	tmp, teardown := setup(t)
+//	defer teardown()
 func setup(t *testing.T) (string, func()) {
 	t.Helper()
 	tmp, err := os.MkdirTemp("", "test")
