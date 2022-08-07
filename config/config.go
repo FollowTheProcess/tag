@@ -4,10 +4,13 @@
 // on version bumping.
 //
 // Example config:
+//
 // [tag]
 // files = [
-//		{ path = "path/to/file.go", search = "version = {{.Current}}", replace = "version = {{.Next}}"},
-//		{ path = "README.md", search = "version = {{.Current}}", replace = "version = {{.Next}}"}
+//
+//	{ path = "path/to/file.go", search = "version = {{.Current}}", replace = "version = {{.Next}}"},
+//	{ path = "README.md", search = "version = {{.Current}}", replace = "version = {{.Next}}"}
+//
 // ]
 package config
 
