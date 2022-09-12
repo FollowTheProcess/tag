@@ -3,7 +3,7 @@ module github.com/FollowTheProcess/tag
 go 1.19
 
 require (
-	github.com/AlecAivazis/survey/v2 v2.3.5
+	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/FollowTheProcess/msg v0.3.0
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/fatih/color v1.13.0
