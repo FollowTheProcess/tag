@@ -13,10 +13,10 @@ import (
 )
 
 var (
-	version     = "dev"                                // tag version, set at compile time by ldflags
-	commit      = ""                                   // tag commit hash, set at compile time by ldflags
-	headerStyle = color.New(color.FgWhite, color.Bold) // Setting header style to use in usage message (usage.go)
-	tagApp      = app.New(os.Stdout, config.Path)      // The tag app instance, initialised once and shared between all files in this pkg
+	version     = "dev"                                      // tag version, set at compile time by ldflags
+	commit      = ""                                         // tag commit hash, set at compile time by ldflags
+	headerStyle = color.New(color.FgWhite, color.Bold)       // Setting header style to use in usage message (usage.go)
+	tagApp      = app.New(os.Stdout, os.Stderr, config.Path) // The tag app instance, initialised once and shared between all files in this pkg
 )
 
 // BuildRootCmd builds and returns the root tag CLI command.

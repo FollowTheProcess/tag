@@ -30,7 +30,8 @@ var errAbort = errors.New("Aborted")
 
 // App represents the tag program.
 type App struct {
-	out     io.Writer      // Where to write output to
+	stdout  io.Writer      // Where to write output to
+	stderr  io.Writer      // Where to write errors to
 	printer *msg.Printer   // The app's printer
 	config  *config.Config // The tag config
 	replace bool           // Whether or not we want to do search and replace
@@ -39,11 +40,12 @@ type App struct {
 // New creates and returns a new app writing to 'out'
 // and using the config file at 'path', if the config file
 // does not exist, app.Replace will be false.
-func New(out io.Writer, path string) *App {
+func New(stdout, stderr io.Writer, path string) *App {
 	printer := msg.Default()
-	printer.Out = out
+	printer.Stdout = stdout
+	printer.Stderr = stderr
 
-	app := &App{out: out, printer: printer}
+	app := &App{stdout: stdout, stderr: stderr, printer: printer}
 
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -88,7 +90,7 @@ func (a *App) List() error {
 	if err != nil {
 		return err
 	}
-	fmt.Fprint(a.out, list)
+	fmt.Fprint(a.stdout, list)
 	return nil
 }
 
@@ -98,7 +100,7 @@ func (a *App) Latest() error {
 	if err != nil {
 		return err
 	}
-	fmt.Fprintln(a.out, latest)
+	fmt.Fprintln(a.stdout, latest)
 	return nil
 }
 

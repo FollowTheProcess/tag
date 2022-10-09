@@ -1,7 +1,6 @@
 linters:
   disable-all: true
   enable:
-    - deadcode
     - errcheck
     - exhaustive
     - gocritic
@@ -17,12 +16,11 @@ linters:
     - staticcheck
     - unconvert
     - unused
-    - varcheck
     - whitespace
 
 linters-settings:
   gocyclo:
-    min-complexity: 15
+    min-complexity: 20
 
   staticcheck:
     go: "1.19"
