@@ -101,7 +101,7 @@ func setup(t *testing.T) (string, func()) {
 // newTestApp creates an app set up for testing.
 func newTestApp(out io.Writer) *App {
 	app := &App{
-		out:     out,
+		stdout:  out,
 		printer: msg.Default(),
 		config: &config.Config{
 			Tag: config.Tag{
