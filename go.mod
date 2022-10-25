@@ -8,7 +8,7 @@ require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/fatih/color v1.13.0
 	github.com/pelletier/go-toml/v2 v2.0.5
-	github.com/spf13/cobra v1.6.0
+	github.com/spf13/cobra v1.6.1
 )
 
 require (
