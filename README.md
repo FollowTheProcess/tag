@@ -84,6 +84,15 @@ files = [
 ]
 ```
 
+Note: you can also use the alternative toml array syntax
+
+```toml
+[[tag.files]]
+path = "README.md"
+search = "version = {{.Current}}"
+replace = "version = {{.Next}}"
+```
+
 Tag uses two special variables `{{.Current}}` and `{{.Next}}` to substitute for the correct versions while bumping as well as the path (relative to `.tag.toml`) of the files you want to change.
 
 So now all you have to do is e.g.
