@@ -138,11 +138,16 @@ func makeAltConfigFile(t *testing.T) string {
 	}
 	defer file.Close()
 	doc := `
-	[tag]
-	files = [
-		{ path = "hello.go", search = "version {{.Current}}", replace = "version {{.Next}}"},
-		{ path = "another.go", search = "version {{.Current}}", replace = "version {{.Next}}"},
-	]`
+	[[tag.files]]
+	path = "hello.go"
+	search = "version {{.Current}}"
+	replace = "version {{.Next}}"
+
+	[[tag.files]]
+	path = "another.go"
+	search = "version {{.Current}}"
+	replace = "version {{.Next}}"
+	`
 	_, err = file.WriteString(doc)
 	if err != nil {
 		t.Fatalf("Could not write to tmp file: %v", err)
