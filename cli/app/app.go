@@ -32,8 +32,8 @@ var errAbort = errors.New("Aborted")
 type App struct {
 	stdout  io.Writer      // Where to write output to
 	stderr  io.Writer      // Where to write errors to
-	printer *msg.Printer   // The app's printer
 	config  *config.Config // The tag config
+	printer msg.Printer    // The app's printer
 	replace bool           // Whether or not we want to do search and replace
 }
 
