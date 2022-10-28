@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
-	github.com/FollowTheProcess/msg v0.4.0
+	github.com/FollowTheProcess/msg v0.5.0
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/fatih/color v1.13.0
 	github.com/pelletier/go-toml/v2 v2.0.5
