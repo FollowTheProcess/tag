@@ -11,10 +11,10 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/FollowTheProcess/msg"
+	"github.com/FollowTheProcess/semver"
 	"github.com/FollowTheProcess/tag/config"
 	"github.com/FollowTheProcess/tag/git"
 	"github.com/FollowTheProcess/tag/replacer"
-	"github.com/FollowTheProcess/tag/version"
 )
 
 const (
@@ -153,20 +153,20 @@ func (a *App) bump(typ, message string, force, push bool) error {
 			return err
 		}
 	}
-	current, err := version.Parse(latest)
+	current, err := semver.Parse(latest)
 	if err != nil {
 		return err
 	}
 
-	var next version.Version
+	var next semver.Version
 
 	switch typ {
 	case major:
-		next = version.BumpMajor(current)
+		next = semver.BumpMajor(current)
 	case minor:
-		next = version.BumpMinor(current)
+		next = semver.BumpMinor(current)
 	case patch:
-		next = version.BumpPatch(current)
+		next = semver.BumpPatch(current)
 	default:
 		panic("unreachable")
 	}
@@ -196,7 +196,7 @@ func (a *App) bump(typ, message string, force, push bool) error {
 }
 
 // doBump is a helper that actually does the bumping (including any replacing).
-func (a *App) doBump(current, next version.Version, message string, push bool) error {
+func (a *App) doBump(current, next semver.Version, message string, push bool) error {
 	if a.replace {
 		if err := a.config.Render(current.String(), next.String()); err != nil {
 			return err
