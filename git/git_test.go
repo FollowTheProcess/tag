@@ -27,6 +27,7 @@ func fakeExecCommand(command string, args ...string) *exec.Cmd {
 }
 
 func TestExecCommandHelper(t *testing.T) {
+	t.Helper()
 	if os.Getenv("GO_WANT_HELPER_PROCESS") != "1" {
 		return
 	}
