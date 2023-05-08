@@ -28,7 +28,7 @@ func setup(t *testing.T) (string, func()) {
 	if err != nil {
 		t.Fatalf("Could not create temp dir: %v", err)
 	}
-	err = os.WriteFile(filepath.Join(tmp, "README.md"), []byte("Hello, version 0.1.0"), 0755)
+	err = os.WriteFile(filepath.Join(tmp, "README.md"), []byte("Hello, version 0.1.0"), 0o755)
 	if err != nil {
 		t.Fatalf("Could not create README.md: %v", err)
 	}
@@ -40,7 +40,7 @@ func setup(t *testing.T) (string, func()) {
 	]
 	`)
 
-	err = os.WriteFile(filepath.Join(tmp, ".tag.toml"), cfg, 0755)
+	err = os.WriteFile(filepath.Join(tmp, ".tag.toml"), cfg, 0o755)
 	if err != nil {
 		t.Fatalf("Could not create .tag.toml: %v", err)
 	}

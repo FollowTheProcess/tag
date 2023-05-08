@@ -22,5 +22,5 @@ func Replace(path, search, replace string) error {
 
 	newContent := bytes.ReplaceAll(contents, []byte(search), []byte(replace))
 
-	return os.WriteFile(path, newContent, 0o755)
+	return os.WriteFile(path, newContent, os.ModePerm)
 }

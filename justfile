@@ -22,7 +22,8 @@ tidy:
 
 # Compile the project binary
 build: tidy fmt
-    go build -ldflags="-X {{ VERSION_LDFLAG }}=dev -X {{ COMMIT_LDFLAG }}={{ COMMIT_SHA }}" -o {{ PROJECT_BIN }}/{{ PROJECT_NAME }} {{ PROJECT_ENTRY_POINT }}
+    mkdir -p {{ PROJECT_BIN }}
+    goreleaser build --single-target --skip-before --snapshot --clean --output {{ PROJECT_BIN }}/{{ PROJECT_NAME }}
 
 # Run go fmt on all project files
 fmt:
@@ -30,16 +31,7 @@ fmt:
 
 # Run all project unit tests
 test *flags: fmt
-    gotest -race ./... {{ flags }}
-
-# Run all project benchmarks
-bench: fmt
-    go test ./... -run=None -benchmem -bench .
-
-# Generate and view a CPU/Memory profile
-pprof pkg type:
-    go test ./{{ pkg }} -cpuprofile cpu.pprof -memprofile mem.pprof -bench .
-    go tool pprof -http=:8000 {{ type }}.pprof
+    go test -race ./... {{ flags }}
 
 # Lint the project and auto-fix errors if possible
 lint: fmt
@@ -47,7 +39,7 @@ lint: fmt
 
 # Calculate test coverage and render the html
 cover:
-    gotest -race -cover -coverprofile={{ COVERAGE_DATA }} ./...
+    go test -race -cover -covermode=atomic -coverprofile={{ COVERAGE_DATA }} ./...
     go tool cover -html={{ COVERAGE_DATA }} -o {{ COVERAGE_HTML }}
     open {{ COVERAGE_HTML }}
 

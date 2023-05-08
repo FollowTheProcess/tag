@@ -2,21 +2,21 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/FollowTheProcess/tag/cli/app"
 	"github.com/FollowTheProcess/tag/config"
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
 var (
-	version     = "dev"                                      // tag version, set at compile time by ldflags
-	commit      = ""                                         // tag commit hash, set at compile time by ldflags
-	headerStyle = color.New(color.FgWhite, color.Bold)       // Setting header style to use in usage message (usage.go)
-	tagApp      = app.New(os.Stdout, os.Stderr, config.Path) // The tag app instance, initialised once and shared between all files in this pkg
+	version   = "dev"                                      // tag version, set at compile time by ldflags
+	commit    = ""                                         // tag version's commit hash, set at compile time by ldflags
+	buildDate = ""                                         // tag build date, set at compile time by ldflags
+	builtBy   = ""                                         // tag built by, set at compile time by ldflags
+	tagApp    = app.New(os.Stdout, os.Stderr, config.Path) // The tag app instance, initialised once and shared between all files in this pkg
+
 )
 
 // BuildRootCmd builds and returns the root tag CLI command.
@@ -51,7 +51,7 @@ func BuildRootCmd() *cobra.Command {
 
 	// Set our custom version and usage templates
 	rootCmd.SetUsageTemplate(usageTemplate)
-	rootCmd.SetVersionTemplate(fmt.Sprintf(`{{printf "%s %s\n%s %s\n"}}`, headerStyle.Sprint("Version:"), version, headerStyle.Sprint("Commit:"), commit))
+	rootCmd.SetVersionTemplate(versionTemplate)
 
 	// Add subcommands
 	rootCmd.AddCommand(

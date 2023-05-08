@@ -13,6 +13,8 @@ builds:
       - -s -w
       - -X github.com/FollowTheProcess/tag/cli/cmd.version={{.Version}}
       - -X github.com/FollowTheProcess/tag/cli/cmd.commit={{.Commit}}
+      - -X github.com/FollowTheProcess/tag/cli/cmd.buildDate={{.Date}}
+      - -X github.com/FollowTheProcess/tag/cli/cmd.builtBy=GoReleaser
     env:
       - CGO_ENABLED=0
     goos:
@@ -25,7 +27,7 @@ builds:
       - arm64
 
 brews:
-  - goarm: "6"
+  - goarm: "7"
     tap:
       owner: "FollowTheProcess"
       name: homebrew-tap
@@ -43,12 +45,14 @@ brews:
       "#{bin}/tag --version"
 
 archives:
-  - replacements:
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
-      386: i386
-      amd64: x86_64
+  - id: tag
+    name_template: >-
+      {{ .ProjectName }}-
+      {{- .Version }}-
+      {{- .Os }}-
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
 
 checksum:
   name_template: "checksums.txt"
