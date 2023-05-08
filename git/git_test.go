@@ -33,7 +33,7 @@ func TestExecCommandHelper(t *testing.T) {
 	}
 
 	fmt.Fprint(os.Stdout, os.Getenv("STDOUT"))
-	i, _ := strconv.Atoi(os.Getenv("EXIT_STATUS"))
+	i, _ := strconv.Atoi(os.Getenv("EXIT_STATUS")) //nolint: errcheck // Ignore error here
 	os.Exit(i)
 }
 

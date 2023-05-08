@@ -110,6 +110,7 @@ func TestRender(t *testing.T) {
 
 // makeConfigFile creates a temporary config file, returning it's path.
 func makeConfigFile(t *testing.T) string {
+	t.Helper()
 	file, err := os.CreateTemp("", "tag.toml")
 	if err != nil {
 		t.Fatalf("CreateTemp returned an error: %v", err)
@@ -132,6 +133,7 @@ func makeConfigFile(t *testing.T) string {
 // makeAltConfigFile creates a temporary config file with alternative TOML syntax
 // returning it's path.
 func makeAltConfigFile(t *testing.T) string {
+	t.Helper()
 	file, err := os.CreateTemp("", "tag.toml")
 	if err != nil {
 		t.Fatalf("CreateTemp returned an error: %v", err)
