@@ -29,17 +29,7 @@ func Add() error {
 
 // Push performs a git push to the configured remote.
 func Push() (string, error) {
-	cmd := gitCommand("git", "push")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		return string(out), err
-	}
-	return string(out), nil
-}
-
-// PushTag pushes a certain tag to the configured remote.
-func PushTag(tag string) (string, error) {
-	cmd := gitCommand("git", "push", "origin", tag)
+	cmd := gitCommand("git", "push", "--follow-tags", "--atomic")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return string(out), err
