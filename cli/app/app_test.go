@@ -9,7 +9,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/FollowTheProcess/msg"
 	"github.com/FollowTheProcess/tag/config"
 	"github.com/FollowTheProcess/tag/git"
 )
@@ -101,8 +100,7 @@ func setup(t *testing.T) (string, func()) {
 // newTestApp creates an app set up for testing.
 func newTestApp(out io.Writer) *App {
 	app := &App{
-		stdout:  out,
-		printer: msg.Default(),
+		stdout: out,
 		config: &config.Config{
 			Tag: config.Tag{
 				Files: []config.File{

@@ -33,7 +33,6 @@ type App struct {
 	stdout  io.Writer      // Where to write output to
 	stderr  io.Writer      // Where to write errors to
 	config  *config.Config // The tag config
-	printer msg.Printer    // The app's printer
 	replace bool           // Whether or not we want to do search and replace
 }
 
@@ -41,11 +40,7 @@ type App struct {
 // and using the config file at 'path', if the config file
 // does not exist, app.Replace will be false.
 func New(stdout, stderr io.Writer, path string) *App {
-	printer := msg.Default()
-	printer.Stdout = stdout
-	printer.Stderr = stderr
-
-	app := &App{stdout: stdout, stderr: stderr, printer: printer}
+	app := &App{stdout: stdout, stderr: stderr}
 
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -61,7 +56,7 @@ func New(stdout, stderr io.Writer, path string) *App {
 	if err != nil {
 		app.replace = false
 	} else {
-		app.printer.Infof("Config file %s found and loaded", path)
+		msg.Finfo(app.stdout, "Config file %s found and loaded", path)
 		app.config = cfg
 		app.replace = true
 	}
@@ -147,7 +142,7 @@ func (a *App) bump(typ, message string, force, push bool) error {
 		if errors.Is(err, git.ErrNoTagsFound) {
 			// No tags, set latest to a new zero version so bumping works as expected
 			// if the repo has no tags yet
-			a.printer.Warn("No tags found, starting from v0.0.0")
+			msg.Fwarn(a.stdout, "No tags found, starting from v0.0.0")
 			latest = "v0.0.0"
 		} else {
 			return err
@@ -191,7 +186,7 @@ func (a *App) bump(typ, message string, force, push bool) error {
 		return err
 	}
 
-	a.printer.Good("Done")
+	msg.Fsuccess(a.stdout, "Done")
 	return nil
 }
 
@@ -204,7 +199,7 @@ func (a *App) doBump(current, next semver.Version, message string, push bool) er
 		for _, file := range a.config.Files {
 			// TODO: If there are multiple entries for the same file, this will open
 			// and close it multiple times which is not ideal
-			a.printer.Infof("Replacing contents in %s", file.Path)
+			msg.Finfo(a.stdout, "Replacing contents in %s", file.Path)
 			err := replacer.Replace(file.Path, file.Search, file.Replace)
 			if err != nil {
 				return err
@@ -213,14 +208,14 @@ func (a *App) doBump(current, next semver.Version, message string, push bool) er
 		if err := git.Add(); err != nil {
 			return err
 		}
-		a.printer.Info("Committing changes")
+		msg.Finfo(a.stdout, "Committing changes")
 		stdout, err := git.Commit(fmt.Sprintf("Bump version %s -> %s", current.String(), next.String()))
 		if err != nil {
 			return errors.New(stdout)
 		}
 	}
 
-	a.printer.Infof("Issuing new tag %s", next.Tag())
+	msg.Finfo(a.stdout, "Issuing new tag %s", next.Tag())
 	stdout, err := git.CreateTag(next.Tag(), message)
 	if err != nil {
 		return errors.New(stdout)
@@ -229,13 +224,13 @@ func (a *App) doBump(current, next semver.Version, message string, push bool) er
 	// If push, push the tag
 	if push {
 		if a.replace {
-			a.printer.Info("Pushing bump commit")
+			msg.Finfo(a.stdout, "Pushing bump commit")
 			stdout, err = git.Push()
 			if err != nil {
 				return errors.New(stdout)
 			}
 		}
-		a.printer.Infof("Pushing tag %s", next.Tag())
+		msg.Finfo(a.stdout, "Pushing tag %s", next.Tag())
 		stdout, err = git.PushTag(next.Tag())
 		if err != nil {
 			return errors.New(stdout)
