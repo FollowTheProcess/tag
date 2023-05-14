@@ -223,15 +223,8 @@ func (a *App) doBump(current, next semver.Version, message string, push bool) er
 
 	// If push, push the tag
 	if push {
-		if a.replace {
-			msg.Finfo(a.stdout, "Pushing bump commit")
-			stdout, err = git.Push()
-			if err != nil {
-				return errors.New(stdout)
-			}
-		}
 		msg.Finfo(a.stdout, "Pushing tag %s", next.Tag())
-		stdout, err = git.PushTag(next.Tag())
+		stdout, err = git.Push()
 		if err != nil {
 			return errors.New(stdout)
 		}

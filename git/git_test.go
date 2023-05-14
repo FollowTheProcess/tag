@@ -153,46 +153,6 @@ func TestPush(t *testing.T) {
 	}
 }
 
-func TestPushTag(t *testing.T) {
-	tests := []struct {
-		name    string
-		stdout  string
-		status  int
-		wantErr bool
-	}{
-		{
-			name:    "happy",
-			stdout:  "success",
-			status:  0,
-			wantErr: false,
-		},
-		{
-			name:    "sad",
-			stdout:  "I failed!",
-			status:  1,
-			wantErr: true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockExitStatus = tt.status
-			mockStdout = tt.stdout
-			gitCommand = fakeExecCommand
-			defer func() { gitCommand = exec.Command }()
-
-			out, err := PushTag("v1.2.3")
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("PushTag() returned %v, wanted %v", err, tt.wantErr)
-			}
-
-			if out != tt.stdout {
-				t.Errorf("PushTag stdout was %q, wanted %q", out, tt.stdout)
-			}
-		})
-	}
-}
-
 func TestListTags(t *testing.T) {
 	tests := []struct {
 		name    string
