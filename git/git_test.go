@@ -200,7 +200,7 @@ func TestListTags(t *testing.T) {
 			gitCommand = fakeExecCommand
 			defer func() { gitCommand = exec.Command }()
 
-			out, err := ListTags(10)
+			out, _, err := ListTags(10)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("ListTags() returned %v, wanted %v", err, tt.wantErr)
 			}

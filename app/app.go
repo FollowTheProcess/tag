@@ -71,11 +71,17 @@ func (a App) List(limit int) error {
 	if limit <= 0 {
 		return fmt.Errorf("--limit must be a positive integer")
 	}
-	tags, err := git.ListTags(limit)
+	tags, limitHit, err := git.ListTags(limit)
 	if err != nil {
 		return err
 	}
+
 	fmt.Fprintln(a.Stdout, strings.TrimSpace(tags))
+	if limitHit {
+		fmt.Fprintln(a.Stdout)
+		msg.Fwarn(a.Stdout, "Truncated, pass --limit to see more")
+	}
+
 	return nil
 }
 
