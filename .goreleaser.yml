@@ -1,20 +1,24 @@
-project_name: "tag"
+project_name: tag
 
 before:
   hooks:
+    - go install golang.org/x/tools/cmd/stringer@latest
     - go mod tidy
+    - go generate ./...
+    - go fmt ./...
 
 builds:
-  - id: "tag"
+  - id: tag
     dir: "."
     main: "./cmd/tag"
-    binary: "tag"
+    binary: tag
     ldflags:
       - -s -w
-      - -X github.com/FollowTheProcess/tag/cli/cmd.version={{.Version}}
-      - -X github.com/FollowTheProcess/tag/cli/cmd.commit={{.Commit}}
-      - -X github.com/FollowTheProcess/tag/cli/cmd.buildDate={{.Date}}
-      - -X github.com/FollowTheProcess/tag/cli/cmd.builtBy=GoReleaser
+      - -X github.com/FollowTheProcess/tag/cli.version={{.Version}}
+      - -X github.com/FollowTheProcess/tag/cli.commit={{.Commit}}
+      - -X github.com/FollowTheProcess/tag/cli.buildDate={{.Date}}
+      - -X github.com/FollowTheProcess/tag/cli.builtBy=GoReleaser
+
     env:
       - CGO_ENABLED=0
     goos:
@@ -29,18 +33,18 @@ builds:
 brews:
   - goarm: "7"
     tap:
-      owner: "FollowTheProcess"
+      owner: FollowTheProcess
       name: homebrew-tap
       token: "{{.Env.HOMEBREW_TAP_TOKEN}}"
     folder: Formula
     commit_author:
-      name: "Tom Fleet"
-      email: "tomfleet2018@gmail.com"
-    homepage: "https://github.com/FollowTheProcess/tag"
-    description: "Easy semantic versioning from the command line"
-    license: "Apache Software License 2.0"
+      name: Tom Fleet
+      email: tomfleet2018@gmail.com
+    homepage: https://github.com/FollowTheProcess/tag
+    description: The all in one semver management tool
+    license: Apache Software License 2.0
     install: |
-      bin.install "tag"
+      bin.install tag
     test: |
       "#{bin}/tag --version"
 
@@ -48,14 +52,14 @@ archives:
   - id: tag
     name_template: >-
       {{ .ProjectName }}-
-      {{- .Version }}-
+      {{- .Version}}-
       {{- .Os }}-
       {{- if eq .Arch "amd64" }}x86_64
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
 
 checksum:
-  name_template: "checksums.txt"
+  name_template: checksums.txt
 
 snapshot:
   name_template: "{{ .Tag }}-next"

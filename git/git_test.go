@@ -32,8 +32,18 @@ func TestExecCommandHelper(t *testing.T) {
 		return
 	}
 
+	tmp, err := os.MkdirTemp("", "cov*")
+	if err != nil {
+		t.Fatalf("could not create temp dir: %v", err)
+	}
+	t.Setenv("GOCOVERDIR", tmp)
+
 	fmt.Fprint(os.Stdout, os.Getenv("STDOUT"))
 	i, _ := strconv.Atoi(os.Getenv("EXIT_STATUS")) //nolint: errcheck // Ignore error here
+
+	if err := os.RemoveAll(tmp); err != nil {
+		t.Fatalf("could not remove tmp: %v", err)
+	}
 	os.Exit(i)
 }
 
@@ -171,9 +181,7 @@ func TestListTags(t *testing.T) {
 			v0.3.2
 			v0.3.1
 			v0.3.0
-			v0.2.0
-			v0.1.0
-			`,
+			v0.2.0`,
 			status:  0,
 			wantErr: false,
 		},
@@ -192,7 +200,7 @@ func TestListTags(t *testing.T) {
 			gitCommand = fakeExecCommand
 			defer func() { gitCommand = exec.Command }()
 
-			out, err := ListTags()
+			out, err := ListTags(10)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("ListTags() returned %v, wanted %v", err, tt.wantErr)
 			}

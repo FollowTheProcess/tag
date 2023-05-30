@@ -4,12 +4,12 @@ import (
 	"os"
 
 	"github.com/FollowTheProcess/msg"
-	"github.com/FollowTheProcess/tag/cli/cmd"
+	"github.com/FollowTheProcess/tag/cli"
 )
 
 func main() {
-	rootCmd := cmd.BuildRootCmd()
-	if err := rootCmd.Execute(); err != nil {
+	cmd := cli.Build()
+	if err := cmd.Execute(); err != nil {
 		msg.Error("%s", err)
 		os.Exit(1)
 	}

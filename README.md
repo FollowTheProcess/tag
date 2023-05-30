@@ -2,16 +2,16 @@
 <img src="https://github.com/FollowTheProcess/tag/raw/main/img/logo.png" alt="logo" width=50% height=50%>
 </p>
 
-# tag
+# Tag
 
 [![License](https://img.shields.io/github/license/FollowTheProcess/tag)](https://github.com/FollowTheProcess/tag)
 [![Go Report Card](https://goreportcard.com/badge/github.com/FollowTheProcess/tag)](https://goreportcard.com/report/github.com/FollowTheProcess/tag)
 [![GitHub](https://img.shields.io/github/v/release/FollowTheProcess/tag?logo=github&sort=semver)](https://github.com/FollowTheProcess/tag)
 [![CI](https://github.com/FollowTheProcess/tag/workflows/CI/badge.svg)](https://github.com/FollowTheProcess/tag/actions?query=workflow%3ACI)
 
-Easy semantic versioning from the command line! 🏷
+The all in one semver management tool
 
-* Free software: Apache Software License 2.0
+⚠️ **Tag is in early development and is not yet ready for use**
 
 ## Project Description
 
@@ -36,9 +36,7 @@ No more 🚀 `tag` has you covered!
 
 ## Installation
 
-There are compiled executables for mac, linux and windows in the GitHub releases section, just download the correct one for your system and architecture.
-
-There is also a [homebrew] tap:
+Compiled binaries for all supported platforms can be found in the [GitHub release]. There is also a [homebrew] tap:
 
 ```shell
 brew install FollowTheProcess/homebrew-tap/tag
@@ -78,19 +76,15 @@ This my project, version = 0.1.0
 `tag` can do that too! All you have to do is tell it what to do with which files to work on, enter the `.tag.toml` config file which should be placed in the root of your repo:
 
 ```toml
-[tag]
-files = [
-    { path = "README.md", search = "version = {{.Current}}", replace = "version = {{.Next}}" },
-]
-```
+version = '0.1.0'
 
-Note: you can also use the alternative toml array syntax
+[[file]]
+path = 'README.md'
+search = 'My project, version {{.Current}}'
 
-```toml
-[[tag.files]]
-path = "README.md"
-search = "version = {{.Current}}"
-replace = "version = {{.Next}}"
+[[file]]
+path = 'somewhereelse.txt'
+search = 'Replace me, version {{.Current}}'
 ```
 
 Tag uses two special variables `{{.Current}}` and `{{.Next}}` to substitute for the correct versions while bumping as well as the path (relative to `.tag.toml`) of the files you want to change.
@@ -119,41 +113,72 @@ After bumping, your README will now look like this:
 This my project, version = 0.2.0
 ```
 
-## Contributing
+## Config File
 
-### Developing
+As mentioned above, `tag` has an optional config file (`.tag.toml`) to be placed at the root of your repo, we've seen specifying files to search and replace
+contents on, but it can do a bit more than that!
 
-`tag` is a very simple project and the goal of the project is to remain very simple in line with the good old unix philosophy:
+A fully populated config file looks like this:
 
-> Write programs that do one thing and do it well.
->
-> Ken Thompson
+```toml
+version = '0.1.0'
 
-Contributions are very much welcomed but please keep this goal in mind 🎯
+[git]
+default-branch = 'main'
+message-template = 'Bump version {{.Current}} -> {{.Next}}'
+tag-template = 'v{{.Next}}'
 
-`tag` is run as a fairly standard Go project:
+[hooks]
+pre-replace = "echo 'I run before doing anything'"
+pre-commit = "echo 'I run after replacing but before committing changes'"
+pre-tag = "echo 'I run after committing changes but before tagging'"
+pre-push = "echo 'I run after tagging, but before pushing'"
 
-* We use all the standard go tools (go test, go build etc.)
-* Linting is done with the help of [golangci-lint] (see docs for install help)
+[[file]]
+path = 'pyproject.toml'
+search = 'version = "{{.Current}}"'
 
-We use [just] as the command runner (mainly because makefiles make me ill, but also because it's great!)
+[[file]]
+path = 'README.md'
+search = 'My project, version {{.Current}}'
+```
 
-### Collaborating
+### Git
 
-No hard and fast rules here but a few guidelines:
+The git section allows you to specify how tag interacts with git whilst bumping versions. You can specify:
 
-* Raise an issue before doing a load of work on a PR, saves everyone bother
-* If you add a feature, be sure to add tests to cover what you've added
-* If you fix a bug, add a test that would have caught the bug you just squashed
-* Be nice :smiley:
+* The default branch for your repo (defaults to `main`). This will be checked prior to bumping to ensure you don't issue a tag on a different branch
+* The commit message template (defaults to `Bump version {{.Current}} -> {{.Next}}`). This sets the message used for your bump commit after contents have been replaced
+* The tag message template (defaults to `v{{.Next}}`). Similar to the commit message but this one is associated to the tag itself.
 
-### Credits
+### Hooks
 
-This package was created with [copier] and the [FollowTheProcess/go_copier] project template.
+Tag also lets you hook into various stages of the replacement/bumping process and inject custom logic in the form of hooks. Hooks are small shell commands that
+let you update things that tag cannot see or run custom commands.
 
-[semver]: https://semver.org
+A good use case is for example, issuing a new version of a rust project with a `Cargo.toml`. In the `Cargo.toml` you must specify a version of your crate:
+
+```toml
+# Cargo.toml
+version = "0.1.0"
+```
+
+When you compile your crate, it generates a `Cargo.lock` which *also* has the version. So if you use tag to bump the version in the `Cargo.toml` then the `Cargo.lock` can fall out of sync and then your crate will fail to build. Because we should never really interact with `Cargo.lock` manually, we can use hooks to re-build the crate
+after replacing the version in `Cargo.toml`:
+
+```toml
+# .tag.toml
+[hooks]
+pre-commit = "cargo build" # Update the lockfile
+```
+
+The hooks are split into stages:
+
+* **`pre-replace`**: This one runs first, more or less before tag does *anything* at all
+* **`pre-commit`**: Runs after replacing contents, but before those changes are added and committed to the repo
+* **`pre-tag`**: Runs after replacing and the changes have been committed, but before the new tag is created
+* **`pre-push`**: Runs last, after everything above is finished but before the tag is pushed to the remote (if the `--push` flag is used)
+
+[GitHub release]: https://github.com/FollowTheProcess/tag/releases
 [homebrew]: https://brew.sh
-[golangci-lint]: https://golangci-lint.run
-[just]: https://github.com/casey/just
-[copier]: https://copier.readthedocs.io/en/latest/
-[FollowTheProcess/go_copier]: https://github.com/FollowTheProcess/go_copier
+[semver]: https://semver.org
