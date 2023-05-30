@@ -258,8 +258,20 @@ func (a App) getBumpVersions(typ bumpType) (current, next semver.Version, err er
 			return semver.Version{}, semver.Version{}, err
 		}
 	} else {
-		// Otherwise just start at v0.0.0
-		current = semver.Version{}
+		// Otherwise start at the latest semver tag present
+		latest, err := git.LatestTag()
+		if err != nil {
+			if errors.Is(err, git.ErrNoTagsFound) {
+				current = semver.Version{} // No tags, no default version, start at v0.0.0
+			} else {
+				return semver.Version{}, semver.Version{}, err
+			}
+		} else {
+			current, err = semver.Parse(latest)
+			if err != nil {
+				return semver.Version{}, semver.Version{}, err
+			}
+		}
 	}
 
 	switch typ {
