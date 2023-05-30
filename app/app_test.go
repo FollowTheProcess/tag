@@ -200,6 +200,24 @@ func TestAppMajor(t *testing.T) {
 		t.Errorf("README replaced incorrectly: got %q, wanted %q", string(readme), want)
 	}
 
+	// Check it's replaced the config version but not the message templates etc.
+	cfg, err := config.Load(filepath.Join(tmp, ".tag.toml"))
+	if err != nil {
+		t.Fatalf("Could not read replaced config file: %v", err)
+	}
+
+	if cfg.Version != "1.0.0" {
+		t.Errorf("Wrong version in replaced config file. Got %s, wanted %s", cfg.Version, "1.0.0")
+	}
+
+	if cfg.Git.MessageTemplate != "Bump version {{.Current}} -> {{.Next}}" {
+		t.Errorf("Wrong message template in replaced config file. Got %s, wanted %s", cfg.Git.MessageTemplate, "Bump version {{.Current}} -> {{.Next}}")
+	}
+
+	if cfg.Git.TagTemplate != "v{{.Next}}" {
+		t.Errorf("Wrong tag template in replaced config file. Got %s, wanted %s", cfg.Git.TagTemplate, "v{{.Next}}")
+	}
+
 	// Check it's made the appropriate commit
 	gitLog := exec.Command("git", "log", "--oneline")
 	stdout, err := gitLog.CombinedOutput()
@@ -322,6 +340,24 @@ func TestAppMinor(t *testing.T) {
 		t.Errorf("README replaced incorrectly: got %q, wanted %q", string(readme), want)
 	}
 
+	// Check it's replaced the config version but not the message templates etc.
+	cfg, err := config.Load(filepath.Join(tmp, ".tag.toml"))
+	if err != nil {
+		t.Fatalf("Could not read replaced config file: %v", err)
+	}
+
+	if cfg.Version != "0.2.0" {
+		t.Errorf("Wrong version in replaced config file. Got %s, wanted %s", cfg.Version, "0.2.0")
+	}
+
+	if cfg.Git.MessageTemplate != "Bump version {{.Current}} -> {{.Next}}" {
+		t.Errorf("Wrong message template in replaced config file. Got %s, wanted %s", cfg.Git.MessageTemplate, "Bump version {{.Current}} -> {{.Next}}")
+	}
+
+	if cfg.Git.TagTemplate != "v{{.Next}}" {
+		t.Errorf("Wrong tag template in replaced config file. Got %s, wanted %s", cfg.Git.TagTemplate, "v{{.Next}}")
+	}
+
 	// Check it's made the appropriate commit
 	gitLog := exec.Command("git", "log", "--oneline")
 	stdout, err := gitLog.CombinedOutput()
@@ -442,6 +478,24 @@ func TestAppPatch(t *testing.T) {
 
 	if string(readme) != want {
 		t.Errorf("README replaced incorrectly: got %q, wanted %q", string(readme), want)
+	}
+
+	// Check it's replaced the config version but not the message templates etc.
+	cfg, err := config.Load(filepath.Join(tmp, ".tag.toml"))
+	if err != nil {
+		t.Fatalf("Could not read replaced config file: %v", err)
+	}
+
+	if cfg.Version != "0.1.1" {
+		t.Errorf("Wrong version in replaced config file. Got %s, wanted %s", cfg.Version, "0.1.1")
+	}
+
+	if cfg.Git.MessageTemplate != "Bump version {{.Current}} -> {{.Next}}" {
+		t.Errorf("Wrong message template in replaced config file. Got %s, wanted %s", cfg.Git.MessageTemplate, "Bump version {{.Current}} -> {{.Next}}")
+	}
+
+	if cfg.Git.TagTemplate != "v{{.Next}}" {
+		t.Errorf("Wrong tag template in replaced config file. Got %s, wanted %s", cfg.Git.TagTemplate, "v{{.Next}}")
 	}
 
 	// Check it's made the appropriate commit
