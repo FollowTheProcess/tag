@@ -1,0 +1,9 @@
+version = '0.1.0'
+
+[[file]]
+path = 'pyproject.toml'
+search = 'version = "{{.Current}}"'
+
+[[file]]
+path = 'README.md'
+search = 'My project, version {{.Current}}'

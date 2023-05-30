@@ -1,4 +1,4 @@
-package cmd
+package cli
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/fatih/color"
 )
 
-var headerStyle = color.New(color.FgWhite, color.Bold) // Setting header style to use in usage message (usage.go)
+var headerStyle = color.New(color.FgWhite, color.Bold) // Setting header style to use in usage message
 
 // Custom usage template with the header style applied, here by itself because it looks kind of messy.
 var usageTemplate = fmt.Sprintf(`%s:{{if .Runnable}}

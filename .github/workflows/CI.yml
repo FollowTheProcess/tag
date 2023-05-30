@@ -12,8 +12,7 @@ concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  GO_VERSION: "1.20"
+permissions: read-all
 
 jobs:
   test:
@@ -27,16 +26,13 @@ jobs:
           - windows-latest
 
     steps:
-      - name: Set up Go ${{ env.GO_VERSION }}
-        uses: actions/setup-go@v4
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Download Dependencies
-        run: go mod download
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
 
       - name: Run Tests
         run: go test -race ./...
@@ -46,13 +42,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Go ${{ env.GO_VERSION }}
-        uses: actions/setup-go@v4
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
       - name: Checkout Code
         uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+
+      - name: Clean Mod Cache # See https://github.com/golangci/golangci-lint-action/issues/135
+        run: go clean -modcache
 
       - name: Run Linting
         uses: golangci/golangci-lint-action@v3
@@ -62,6 +61,8 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     needs:
       - test
@@ -84,16 +85,16 @@ jobs:
           VERSION=${GITHUB_REF#refs/tags/v}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Set up Go ${{ env.GO_VERSION }}
+      - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: go.mod
 
-      - name: Publish Release Notes
+      - name: Publish Draft Release
         uses: release-drafter/release-drafter@v5
         with:
-            version: ${{ steps.version.outputs.version }}
-            publish: true
+          version: ${{ steps.version.outputs.version }}
+          publish: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

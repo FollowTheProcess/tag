@@ -1,0 +1,15 @@
+version = '0.1.0'
+
+[hooks]
+pre-replace = "echo 'I run before doing anything'"
+pre-commit = "echo 'I run after replacing but before committing changes'"
+pre-tag = "echo 'I run after committing changes but before tagging'"
+pre-push = "echo 'I run after tagging, but before pushing'"
+
+[[file]]
+path = 'pyproject.toml'
+search = 'version = "{{.Current}}"'
+
+[[file]]
+path = 'README.md'
+search = 'My project, version {{.Current}}'
