@@ -387,6 +387,10 @@ func (a App) ensureBumpable() error {
 		return err
 	}
 
+	if a.Cfg.Git.DefaultBranch == "" {
+		a.Cfg.Git.DefaultBranch = "main" // Default
+	}
+
 	if branch != a.Cfg.Git.DefaultBranch {
 		return fmt.Errorf("Not on default branch (%s), currently on: %s", a.Cfg.Git.DefaultBranch, branch)
 	}
