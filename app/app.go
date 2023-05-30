@@ -248,21 +248,19 @@ func (a App) replace(dryRun bool) error {
 	return nil
 }
 
-// bump is a helper that performs logic common to all bump methods.
-func (a App) bump(typ bumpType, push, force, dryRun bool) error {
-	if err := a.ensureRepo(); err != nil {
-		return err
+// getBumpVersions is a helper that gets .Current and .Next from context.
+func (a App) getBumpVersions(typ bumpType) (current, next semver.Version, err error) {
+	if a.replaceMode {
+		// If the config file is present, use the version specified in there
+		var err error
+		current, err = semver.Parse(a.Cfg.Version)
+		if err != nil {
+			return semver.Version{}, semver.Version{}, err
+		}
+	} else {
+		// Otherwise just start at v0.0.0
+		current = semver.Version{}
 	}
-	if err := a.ensureBumpable(); err != nil {
-		return err
-	}
-
-	current, err := semver.Parse(a.Cfg.Version)
-	if err != nil {
-		return err
-	}
-
-	var next semver.Version
 
 	switch typ {
 	case major:
@@ -272,7 +270,24 @@ func (a App) bump(typ bumpType, push, force, dryRun bool) error {
 	case patch:
 		next = semver.BumpPatch(current)
 	default:
-		return fmt.Errorf("Unrecognised bump type: %v", typ)
+		return semver.Version{}, semver.Version{}, fmt.Errorf("Unrecognised bump type: %v", typ)
+	}
+
+	return current, next, nil
+}
+
+// bump is a helper that performs logic common to all bump methods.
+func (a App) bump(typ bumpType, push, force, dryRun bool) error {
+	if err := a.ensureRepo(); err != nil {
+		return err
+	}
+	if err := a.ensureBumpable(); err != nil {
+		return err
+	}
+
+	current, next, err := a.getBumpVersions(typ)
+	if err != nil {
+		return err
 	}
 
 	if !force {
@@ -280,7 +295,7 @@ func (a App) bump(typ bumpType, push, force, dryRun bool) error {
 			Message: fmt.Sprintf("This will bump %q to %q. Are you sure?", current, next),
 			Default: false,
 		}
-		err = survey.AskOne(confirm, &force)
+		err := survey.AskOne(confirm, &force)
 		if err != nil {
 			return err
 		}
