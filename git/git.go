@@ -38,18 +38,19 @@ func Push() (string, error) {
 }
 
 // ListTags lists all tags in descending order (latest at the top).
-func ListTags(limit int) (string, error) {
+func ListTags(limit int) (tags string, limitHit bool, err error) {
 	// git will return nothing if there are no tags
 	cmd := gitCommand("git", "tag", "--sort=-version:refname")
 	out, err := cmd.CombinedOutput()
 	if bytes.Equal(out, []byte("")) {
-		return "", ErrNoTagsFound
+		return "", false, ErrNoTagsFound
 	}
 	lines := bytes.Split(out, []byte("\n"))
 	if len(lines) > limit {
+		limitHit = true
 		lines = lines[:limit]
 	}
-	return string(bytes.Join(lines, []byte("\n"))), err
+	return string(bytes.Join(lines, []byte("\n"))), limitHit, err
 }
 
 // LatestTag returns the name of the latest tag.
