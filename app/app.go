@@ -252,7 +252,6 @@ func (a App) replace(dryRun bool) error {
 func (a App) getBumpVersions(typ bumpType) (current, next semver.Version, err error) {
 	if a.replaceMode {
 		// If the config file is present, use the version specified in there
-		var err error
 		current, err = semver.Parse(a.Cfg.Version)
 		if err != nil {
 			return semver.Version{}, semver.Version{}, err
