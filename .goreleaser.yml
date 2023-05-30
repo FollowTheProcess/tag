@@ -44,7 +44,7 @@ brews:
     description: The all in one semver management tool
     license: Apache Software License 2.0
     install: |
-      bin.install tag
+      bin.install "tag"
     test: |
       "#{bin}/tag --version"
 
