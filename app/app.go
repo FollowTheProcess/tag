@@ -165,6 +165,11 @@ func (a App) Init(cwd string, force bool) error {
 	return nil
 }
 
+// TODO: When it rewrites the config back, it does the rendered config with all
+// the .Current and .Next set to the actual values
+// Read the config in from scratch so it's not rendered (or make a new one)
+// and then only update the version before saving back
+
 // Major handles the major subcommand.
 func (a App) Major(push, force, dryRun bool) error {
 	return a.bump(major, push, force, dryRun)
@@ -183,6 +188,7 @@ func (a App) Patch(push, force, dryRun bool) error {
 // replaceAll is a helper that performs and reports on file replacement
 // as part of bumping.
 func (a App) replaceAll(current, next semver.Version, dryRun bool) error {
+	originalConfig := a.Cfg
 	if err := a.Cfg.Render(current.String(), next.String()); err != nil {
 		return err
 	}
@@ -192,9 +198,9 @@ func (a App) replaceAll(current, next semver.Version, dryRun bool) error {
 	}
 
 	// Also replace the Version in the config file
-	a.Cfg.Version = next.String()
+	originalConfig.Version = next.String()
 	if !dryRun {
-		if err := a.Cfg.Save(config.Filename); err != nil {
+		if err := originalConfig.Save(config.Filename); err != nil {
 			return err
 		}
 	}
