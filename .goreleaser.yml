@@ -29,13 +29,15 @@ builds:
       - "386"
       - amd64
       - arm64
+    goarm:
+      - "7"
 
 brews:
-  - goarm: "7"
-    tap:
+  - tap:
       owner: FollowTheProcess
       name: homebrew-tap
       token: "{{.Env.HOMEBREW_TAP_TOKEN}}"
+    goarm: "7"
     folder: Formula
     commit_author:
       name: Tom Fleet
@@ -58,11 +60,23 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
 
+sboms:
+  - id: tag
+    artifacts: archive
+    documents:
+      - >-
+        {{ .ProjectName }}-
+        {{- .Version}}-
+        {{- .Os }}-
+        {{- if eq .Arch "amd64" }}x86_64
+        {{- else if eq .Arch "386" }}i386
+        {{- else }}{{ .Arch }}{{ end }}.sbom
+
 checksum:
   name_template: checksums.txt
 
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: "{{ .Tag }}-dev{{ .ShortCommit }}"
 
 changelog:
   # The changelog is handled by release drafter
