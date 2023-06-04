@@ -11,8 +11,6 @@
 
 The all in one semver management tool
 
-⚠️ **Tag is in early development and is not yet ready for use**
-
 ## Project Description
 
 Releasing new versions of software can be hard! Most projects have CI/CD pipelines set up to help with this and these pipelines are typically triggered on push of a new [semver] tag e.g. `v1.2.4`.
@@ -39,7 +37,7 @@ No more 🚀 `tag` has you covered!
 Compiled binaries for all supported platforms can be found in the [GitHub release]. There is also a [homebrew] tap:
 
 ```shell
-brew install FollowTheProcess/homebrew-tap/tag
+brew install FollowTheProcess/tap/tag
 ```
 
 ## Usage
