@@ -1,7 +1,7 @@
 github.com/AlecAivazis/survey/v2 v2.3.6 h1:NvTuVHISgTHEHeBFqt6BHOe4Ny/NwGZr7w+F8S9ziyw=
 github.com/AlecAivazis/survey/v2 v2.3.6/go.mod h1:4AuI9b7RjAR+G7v9+C4YSlX/YL3K3cWNXgWXOhllqvI=
-github.com/FollowTheProcess/msg v0.6.0 h1:KsBZ8W80iseQzioCmn8RZPYBqvcVM6ZIMP+pz0LLnnI=
-github.com/FollowTheProcess/msg v0.6.0/go.mod h1:mMA4Q0tbZ6wfDH0X1gJLof2nxZxFzv/V7W1FWb2P8uw=
+github.com/FollowTheProcess/msg v0.6.1 h1:3MjZhxxp8cH1noktnwKUrmvaY4MeWVY7ZlyjFaGTsXQ=
+github.com/FollowTheProcess/msg v0.6.1/go.mod h1:mMA4Q0tbZ6wfDH0X1gJLof2nxZxFzv/V7W1FWb2P8uw=
 github.com/FollowTheProcess/semver v0.1.1 h1:gO8D7adZuJKy5/94infk4Y77C1eVL5MdWBhahjstcf8=
 github.com/FollowTheProcess/semver v0.1.1/go.mod h1:4hkF/57Zbl0j726/OOmxWS6nE7NgAxzlRANqwt8mZTU=
 github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2 h1:+vx7roKuyA63nhn5WAunQHLTznkw5W8b1Xc0dNjp83s=
