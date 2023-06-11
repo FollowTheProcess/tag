@@ -44,7 +44,7 @@ func TestExecCommandHelper(t *testing.T) {
 	if err := os.RemoveAll(tmp); err != nil {
 		t.Fatalf("could not remove tmp: %v", err)
 	}
-	os.Exit(i)
+	os.Exit(i) //nolint: revive // Needed for the helper process
 }
 
 func TestCommit(t *testing.T) {

@@ -46,11 +46,11 @@ func New(cwd string, stdout, stderr io.Writer) (App, error) {
 	replaceMode := true
 	cfg, err := config.Load(path)
 	if err != nil {
-		if errors.Is(err, config.ErrNoConfigFile) {
-			replaceMode = false
-		} else {
+		if !errors.Is(err, config.ErrNoConfigFile) {
 			return App{}, err
 		}
+
+		replaceMode = false
 	}
 
 	app := App{
@@ -272,11 +272,11 @@ func (a App) getBumpVersions(typ bumpType) (current, next semver.Version, err er
 		// Otherwise start at the latest semver tag present
 		latest, err := git.LatestTag()
 		if err != nil {
-			if errors.Is(err, git.ErrNoTagsFound) {
-				current = semver.Version{} // No tags, no default version, start at v0.0.0
-			} else {
+			if !errors.Is(err, git.ErrNoTagsFound) {
 				return semver.Version{}, semver.Version{}, err
 			}
+
+			current = semver.Version{} // No tags, no default version, start at v0.0.0
 		} else {
 			current, err = semver.Parse(latest)
 			if err != nil {
