@@ -1,4 +1,4 @@
-package git
+package git //nolint: testpackage // We need access to internals to mock os.Exec
 
 import (
 	"fmt"

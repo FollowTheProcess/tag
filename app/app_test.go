@@ -1,4 +1,4 @@
-package app
+package app //nolint: testpackage // We need access to some internals
 
 import (
 	"bytes"
