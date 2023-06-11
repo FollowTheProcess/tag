@@ -2,6 +2,7 @@ package app
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -11,6 +12,13 @@ import (
 
 	"github.com/FollowTheProcess/tag/config"
 	"github.com/FollowTheProcess/tag/git"
+)
+
+const (
+	initialVersion       = "v0.1.0"
+	initialReadmeContent = "Hello, version 0.1.0"
+	defaultBumpTemplate  = "Bump version {{.Current}} -> {{.Next}}"
+	defaultTagTemplate   = "v{{.Next}}"
 )
 
 // setup creates a tempdir, initialises a git repo with a README to do
@@ -27,7 +35,7 @@ func setup(t *testing.T) (string, func()) {
 	if err != nil {
 		t.Fatalf("Could not create temp dir: %v", err)
 	}
-	err = os.WriteFile(filepath.Join(tmp, "README.md"), []byte("Hello, version 0.1.0"), 0o755)
+	err = os.WriteFile(filepath.Join(tmp, "README.md"), []byte(initialReadmeContent), 0o755)
 	if err != nil {
 		t.Fatalf("Could not create README.md: %v", err)
 	}
@@ -71,7 +79,7 @@ func setup(t *testing.T) (string, func()) {
 	commit := exec.Command("git", "commit", "-m", "test commit")
 	commit.Dir = tmp
 
-	firstTag := exec.Command("git", "tag", "-a", "v0.1.0", "-m", "test tag")
+	firstTag := exec.Command("git", "tag", "-a", initialVersion, "-m", "test tag")
 	firstTag.Dir = tmp
 
 	err = init.Run()
@@ -143,8 +151,8 @@ func TestAppLatest(t *testing.T) {
 		t.Fatalf("app.Latest returned an error: %v", err)
 	}
 
-	if out.String() != "v0.1.0\n" {
-		t.Errorf("app.Latest incorrect stdout: got %q, wanted %q", out.String(), "v0.1.0\n")
+	if out.String() != fmt.Sprintln(initialVersion) {
+		t.Errorf("app.Latest incorrect stdout: got %q, wanted %q", out.String(), fmt.Sprintln(initialVersion))
 	}
 }
 
@@ -164,8 +172,8 @@ func TestAppList(t *testing.T) {
 		t.Fatalf("app.List returned an error: %v", err)
 	}
 
-	if out.String() != "v0.1.0\n" {
-		t.Errorf("app.List incorrect stdout: got %q, wanted %q", out.String(), "v0.1.0\n")
+	if out.String() != fmt.Sprintln(initialVersion) {
+		t.Errorf("app.List incorrect stdout: got %q, wanted %q", out.String(), fmt.Sprintln(initialVersion))
 	}
 }
 
@@ -210,12 +218,12 @@ func TestAppMajor(t *testing.T) {
 		t.Errorf("Wrong version in replaced config file. Got %s, wanted %s", cfg.Version, "1.0.0")
 	}
 
-	if cfg.Git.MessageTemplate != "Bump version {{.Current}} -> {{.Next}}" {
-		t.Errorf("Wrong message template in replaced config file. Got %s, wanted %s", cfg.Git.MessageTemplate, "Bump version {{.Current}} -> {{.Next}}")
+	if cfg.Git.MessageTemplate != defaultBumpTemplate {
+		t.Errorf("Wrong message template in replaced config file. Got %s, wanted %s", cfg.Git.MessageTemplate, defaultBumpTemplate)
 	}
 
-	if cfg.Git.TagTemplate != "v{{.Next}}" {
-		t.Errorf("Wrong tag template in replaced config file. Got %s, wanted %s", cfg.Git.TagTemplate, "v{{.Next}}")
+	if cfg.Git.TagTemplate != defaultTagTemplate {
+		t.Errorf("Wrong tag template in replaced config file. Got %s, wanted %s", cfg.Git.TagTemplate, defaultTagTemplate)
 	}
 
 	// Check it's made the appropriate commit
@@ -273,10 +281,9 @@ func TestAppMajorDryRun(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Could not read from replaced README: %v", err)
 	}
-	want := "Hello, version 0.1.0"
 
-	if string(readme) != want {
-		t.Errorf("README replaced despite dry-run: got %q, wanted %q", string(readme), want)
+	if string(readme) != initialReadmeContent {
+		t.Errorf("README replaced despite dry-run: got %q, wanted %q", string(readme), initialReadmeContent)
 	}
 
 	// Check it's not made a commit
@@ -304,8 +311,8 @@ func TestAppMajorDryRun(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not get latest tag: %v", err)
 	}
-	if latest != "v0.1.0" {
-		t.Errorf("Wrong latest tag: got %s, wanted %s", latest, "v0.1.0")
+	if latest != initialVersion {
+		t.Errorf("Wrong latest tag: got %s, wanted %s", latest, initialVersion)
 	}
 }
 
@@ -350,12 +357,12 @@ func TestAppMinor(t *testing.T) {
 		t.Errorf("Wrong version in replaced config file. Got %s, wanted %s", cfg.Version, "0.2.0")
 	}
 
-	if cfg.Git.MessageTemplate != "Bump version {{.Current}} -> {{.Next}}" {
-		t.Errorf("Wrong message template in replaced config file. Got %s, wanted %s", cfg.Git.MessageTemplate, "Bump version {{.Current}} -> {{.Next}}")
+	if cfg.Git.MessageTemplate != defaultBumpTemplate {
+		t.Errorf("Wrong message template in replaced config file. Got %s, wanted %s", cfg.Git.MessageTemplate, defaultBumpTemplate)
 	}
 
-	if cfg.Git.TagTemplate != "v{{.Next}}" {
-		t.Errorf("Wrong tag template in replaced config file. Got %s, wanted %s", cfg.Git.TagTemplate, "v{{.Next}}")
+	if cfg.Git.TagTemplate != defaultTagTemplate {
+		t.Errorf("Wrong tag template in replaced config file. Got %s, wanted %s", cfg.Git.TagTemplate, defaultTagTemplate)
 	}
 
 	// Check it's made the appropriate commit
@@ -413,10 +420,9 @@ func TestAppMinorDryRun(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Could not read from replaced README: %v", err)
 	}
-	want := "Hello, version 0.1.0"
 
-	if string(readme) != want {
-		t.Errorf("README replaced despite dry-run: got %q, wanted %q", string(readme), want)
+	if string(readme) != initialReadmeContent {
+		t.Errorf("README replaced despite dry-run: got %q, wanted %q", string(readme), initialReadmeContent)
 	}
 
 	// Check it's not made a commit
@@ -444,8 +450,8 @@ func TestAppMinorDryRun(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not get latest tag: %v", err)
 	}
-	if latest != "v0.1.0" {
-		t.Errorf("Wrong latest tag: got %s, wanted %s", latest, "v0.1.0")
+	if latest != initialVersion {
+		t.Errorf("Wrong latest tag: got %s, wanted %s", latest, initialVersion)
 	}
 }
 
@@ -490,12 +496,12 @@ func TestAppPatch(t *testing.T) {
 		t.Errorf("Wrong version in replaced config file. Got %s, wanted %s", cfg.Version, "0.1.1")
 	}
 
-	if cfg.Git.MessageTemplate != "Bump version {{.Current}} -> {{.Next}}" {
-		t.Errorf("Wrong message template in replaced config file. Got %s, wanted %s", cfg.Git.MessageTemplate, "Bump version {{.Current}} -> {{.Next}}")
+	if cfg.Git.MessageTemplate != defaultBumpTemplate {
+		t.Errorf("Wrong message template in replaced config file. Got %s, wanted %s", cfg.Git.MessageTemplate, defaultBumpTemplate)
 	}
 
-	if cfg.Git.TagTemplate != "v{{.Next}}" {
-		t.Errorf("Wrong tag template in replaced config file. Got %s, wanted %s", cfg.Git.TagTemplate, "v{{.Next}}")
+	if cfg.Git.TagTemplate != defaultTagTemplate {
+		t.Errorf("Wrong tag template in replaced config file. Got %s, wanted %s", cfg.Git.TagTemplate, defaultTagTemplate)
 	}
 
 	// Check it's made the appropriate commit
@@ -553,10 +559,9 @@ func TestAppPatchDryRun(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Could not read from replaced README: %v", err)
 	}
-	want := "Hello, version 0.1.0"
 
-	if string(readme) != want {
-		t.Errorf("README replaced despite dry-run: got %q, wanted %q", string(readme), want)
+	if string(readme) != initialReadmeContent {
+		t.Errorf("README replaced despite dry-run: got %q, wanted %q", string(readme), initialReadmeContent)
 	}
 
 	// Check it's not made a commit
@@ -584,7 +589,7 @@ func TestAppPatchDryRun(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not get latest tag: %v", err)
 	}
-	if latest != "v0.1.0" {
-		t.Errorf("Wrong latest tag: got %s, wanted %s", latest, "v0.1.0")
+	if latest != initialVersion {
+		t.Errorf("Wrong latest tag: got %s, wanted %s", latest, initialVersion)
 	}
 }
