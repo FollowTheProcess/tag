@@ -37,9 +37,13 @@ func Run(stage HookStage, cmd string, stdout, stderr io.Writer) error {
 		return fmt.Errorf("Command %q in hook stage %s not valid shell syntax: %w", cmd, stage, err)
 	}
 
+	execHandler := func(interp.ExecHandlerFunc) interp.ExecHandlerFunc {
+		return interp.DefaultExecHandler(execTimeout)
+	}
+
 	runner, err := interp.New(
 		interp.Params("-e"),
-		interp.ExecHandler(interp.DefaultExecHandler(execTimeout)),
+		interp.ExecHandlers(execHandler),
 		interp.OpenHandler(interp.DefaultOpenHandler()),
 		interp.StdIO(nil, stdout, stderr),
 	)
