@@ -1,6 +1,8 @@
 .PHONY: help tidy fmt test lint cover clean check sloc gen build install uninstall
 .DEFAULT_GOAL := help
 
+export GOEXPERIMENT := loopvar
+
 help: ## Show the list of available tasks
 	@echo "Available Tasks:\n"
 	@grep -E '^[a-zA-Z_0-9%-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "%-10s %s\n", $$1, $$2}'
