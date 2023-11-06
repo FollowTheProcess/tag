@@ -8,7 +8,7 @@ require (
 	github.com/FollowTheProcess/semver v0.1.1
 	github.com/fatih/color v1.16.0
 	github.com/pelletier/go-toml/v2 v2.1.0
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	mvdan.cc/sh/v3 v3.7.0
 )
 
