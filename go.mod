@@ -7,7 +7,7 @@ require (
 	github.com/FollowTheProcess/msg v1.0.0
 	github.com/FollowTheProcess/semver v0.1.1
 	github.com/fatih/color v1.16.0
-	github.com/pelletier/go-toml/v2 v2.1.1
+	github.com/pelletier/go-toml/v2 v2.2.0
 	github.com/spf13/cobra v1.8.0
 	mvdan.cc/sh/v3 v3.8.0
 )
