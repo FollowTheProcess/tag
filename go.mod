@@ -8,7 +8,7 @@ require (
 	github.com/FollowTheProcess/semver v0.1.1
 	github.com/fatih/color v1.16.0
 	github.com/pelletier/go-toml/v2 v2.2.2
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	mvdan.cc/sh/v3 v3.8.0
 )
 
@@ -22,5 +22,5 @@ require (
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/term v0.17.0 // indirect
-	golang.org/x/text v0.12.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
 )
