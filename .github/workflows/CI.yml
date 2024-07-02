@@ -5,22 +5,19 @@ on:
   push:
     branches:
       - main
-    tags:
-      - v*
 
 concurrency:
-  group: ${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions: read-all
-
-env:
-  GOEXPERIMENT: loopvar
+permissions: {}
 
 jobs:
   test:
     name: Test
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       matrix:
         os:
@@ -40,9 +37,35 @@ jobs:
       - name: Run Tests
         run: go test -race ./...
 
+  cov:
+    name: CodeCov
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Run Tests
+        run: go test -race -cover -covermode=atomic -coverprofile=./coverage.out ./...
+
+      - name: Coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.out
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout Code
@@ -57,60 +80,6 @@ jobs:
         run: go clean -modcache
 
       - name: Run Linting
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v5
         with:
           version: latest
-
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    needs:
-      - test
-      - lint
-
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Fetch Existing Tags
-        run: git fetch --force --tags
-
-      - name: Install Syft
-        uses: jaxxstorm/action-install-gh-release@v1.12.0
-        with:
-          repo: anchore/syft
-
-      - name: Parse Release Version
-        id: version
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-
-      - name: Publish Draft Release
-        uses: release-drafter/release-drafter@v6
-        with:
-          version: ${{ steps.version.outputs.version }}
-          publish: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
-        with:
-          version: latest
-          args: release --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
