@@ -3,14 +3,12 @@ package cli
 import (
 	"os"
 
+	"github.com/FollowTheProcess/cli"
 	"github.com/FollowTheProcess/tag/app"
-	"github.com/spf13/cobra"
 )
 
 const (
 	patchLong = `
-Bump the patch version
-
 You may also push the tag to any configured remote
 with the "-p/--push" flag.
 
@@ -24,29 +22,26 @@ If the "-d/--dry-run" flag is used, tag will simply print what would
 have happened, but not do anything. This is useful for checking you have
 set everything up correctly.
 `
-	patchExample = `
-$ tag patch
-
-$ tag patch --push
-
-$ tag patch --push --force
-`
 )
 
 // buildPatch builds and returns the patch subcommand.
-func buildPatch() *cobra.Command {
+func buildPatch() (*cli.Command, error) {
 	var (
 		push   bool
 		force  bool
 		dryRun bool
 	)
-	cmd := &cobra.Command{
-		Use:     "patch",
-		Args:    cobra.NoArgs,
-		Short:   "Bump the patch version and issue a new tag",
-		Long:    patchLong,
-		Example: patchExample,
-		RunE: func(cmd *cobra.Command, args []string) error {
+	cmd, err := cli.New(
+		"patch",
+		cli.Short("Bump the patch version and issue a new tag"),
+		cli.Long(patchLong),
+		cli.Example("Bump the patch version", "tag patch"),
+		cli.Example("Bump and push the tag to the remote", "tag patch --push"),
+		cli.Example("Do not prompt for confirmation", "tag patch --push --force"),
+		cli.Flag(&push, "push", 'p', false, "Push the tag to the remote"),
+		cli.Flag(&force, "force", 'f', false, "Bypass confirmation prompt"),
+		cli.Flag(&dryRun, "dry-run", 'd', false, "Print what would have happened"),
+		cli.Run(func(cmd *cli.Command, args []string) error {
 			cwd, err := os.Getwd()
 			if err != nil {
 				return err
@@ -56,13 +51,11 @@ func buildPatch() *cobra.Command {
 				return err
 			}
 			return tag.Patch(push, force, dryRun)
-		},
+		}),
+	)
+	if err != nil {
+		return nil, err
 	}
 
-	flags := cmd.Flags()
-	flags.BoolVarP(&push, "push", "p", false, "Push the tag to the remote")
-	flags.BoolVarP(&force, "force", "f", false, "Bypass confirmation prompt")
-	flags.BoolVarP(&dryRun, "dry-run", "d", false, "Print what would have happened")
-
-	return cmd
+	return cmd, nil
 }
