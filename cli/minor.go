@@ -38,6 +38,7 @@ func buildMinor() (*cli.Command, error) {
 		cli.Example("Bump the minor version", "tag minor"),
 		cli.Example("Bump and push the tag to the remote", "tag minor --push"),
 		cli.Example("Do not prompt for confirmation", "tag minor --push --force"),
+		cli.Allow(cli.NoArgs()),
 		cli.Flag(&push, "push", 'p', false, "Push the tag to the remote"),
 		cli.Flag(&force, "force", 'f', false, "Bypass confirmation prompt"),
 		cli.Flag(&dryRun, "dry-run", 'd', false, "Print what would have happened"),
