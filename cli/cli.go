@@ -1,55 +1,64 @@
 // Package cli implements tags command line interface.
 package cli
 
-import "github.com/spf13/cobra"
-
-const (
-	about   = "The all in one semver management tool 🛠️"
-	example = `
-# List tags in order
-$ tag list
-
-# Get latest tag
-$ tag latest
-
-# Bump a version (including content search and replace)
-$ tag {patch | minor | major}
-`
-)
+import "github.com/FollowTheProcess/cli"
 
 // These are all set at compile time.
 var (
 	version   = "dev"
-	commit    = ""
-	buildDate = ""
-	builtBy   = ""
+	commit    = "unknown"
+	buildDate = "unknown"
 )
 
 // Build builds and returns the tag CLI.
-func Build() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:           "tag COMMAND [FLAGS]",
-		Version:       version,
-		Args:          cobra.NoArgs,
-		SilenceUsage:  true,
-		SilenceErrors: true,
-		Short:         about,
-		Example:       example,
+func Build() (*cli.Command, error) {
+	initCmd, err := buildInit()
+	if err != nil {
+		return nil, err
+	}
+	latestCmd, err := buildLatest()
+	if err != nil {
+		return nil, err
+	}
+	listCmd, err := buildList()
+	if err != nil {
+		return nil, err
+	}
+	majorCmd, err := buildMajor()
+	if err != nil {
+		return nil, err
+	}
+	minorCmd, err := buildMinor()
+	if err != nil {
+		return nil, err
+	}
+	patchCmd, err := buildPatch()
+	if err != nil {
+		return nil, err
+	}
+	cmd, err := cli.New(
+		"tag",
+		cli.Short("The all in one semver management tool 🛠️"),
+		cli.Example("List tags in order", "tag list"),
+		cli.Example("Get latest tag", "tag latest"),
+		cli.Example("Bump a version (including content search and replace)", "tag {patch | minor | major}"),
+		cli.Version(version),
+		cli.Commit(commit),
+		cli.BuildDate(buildDate),
+		cli.Allow(cli.NoArgs()),
+		cli.SubCommands(
+			initCmd,
+			latestCmd,
+			listCmd,
+			majorCmd,
+			minorCmd,
+			patchCmd,
+		),
+	)
+	// TODO(@FollowTheProcess): Subcommands
+	if err != nil {
+		return nil, err
 	}
 
-	// Set our custom version and usage templates
-	cmd.SetUsageTemplate(usageTemplate)
-	cmd.SetVersionTemplate(versionTemplate)
-
-	// Attach the subcommands
-	cmd.AddCommand(
-		buildList(),
-		buildLatest(),
-		buildInit(),
-		buildMajor(),
-		buildMinor(),
-		buildPatch(),
-	)
-
-	return cmd
+	return cmd, nil
 }

@@ -3,22 +3,18 @@ package cli
 import (
 	"os"
 
+	"github.com/FollowTheProcess/cli"
 	"github.com/FollowTheProcess/tag/app"
-	"github.com/spf13/cobra"
 )
 
-const latestExample = `
-$ tag latest
-`
-
 // buildLatest builds and returns the latest subcommand.
-func buildLatest() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:     "latest",
-		Args:    cobra.NoArgs,
-		Short:   "Show latest semver tag",
-		Example: latestExample,
-		RunE: func(cmd *cobra.Command, args []string) error {
+func buildLatest() (*cli.Command, error) {
+	cmd, err := cli.New(
+		"latest",
+		cli.Short("Show latest semver tag"),
+		cli.Example("Show the latest", "tag latest"),
+		cli.Allow(cli.NoArgs()),
+		cli.Run(func(cmd *cli.Command, args []string) error {
 			cwd, err := os.Getwd()
 			if err != nil {
 				return err
@@ -28,8 +24,11 @@ func buildLatest() *cobra.Command {
 				return err
 			}
 			return tag.Latest()
-		},
+		}),
+	)
+	if err != nil {
+		return nil, err
 	}
 
-	return cmd
+	return cmd, nil
 }
