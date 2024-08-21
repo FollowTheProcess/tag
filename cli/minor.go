@@ -3,14 +3,12 @@ package cli
 import (
 	"os"
 
+	"github.com/FollowTheProcess/cli"
 	"github.com/FollowTheProcess/tag/app"
-	"github.com/spf13/cobra"
 )
 
 const (
 	minorLong = `
-Bump the minor version
-
 You may also push the tag to any configured remote
 with the "-p/--push" flag.
 
@@ -24,29 +22,27 @@ If the "-d/--dry-run" flag is used, tag will simply print what would
 have happened, but not do anything. This is useful for checking you have
 set everything up correctly.
 `
-	minorExample = `
-$ tag minor
-
-$ tag minor --push
-
-$ tag minor --push --force
-`
 )
 
 // buildMinor builds and returns the minor subcommand.
-func buildMinor() *cobra.Command {
+func buildMinor() (*cli.Command, error) {
 	var (
 		push   bool
 		force  bool
 		dryRun bool
 	)
-	cmd := &cobra.Command{
-		Use:     "minor",
-		Args:    cobra.NoArgs,
-		Short:   "Bump the minor version and issue a new tag",
-		Long:    minorLong,
-		Example: minorExample,
-		RunE: func(cmd *cobra.Command, args []string) error {
+	cmd, err := cli.New(
+		"minor",
+		cli.Short("Bump the minor version and issue a new tag"),
+		cli.Long(minorLong),
+		cli.Example("Bump the minor version", "tag minor"),
+		cli.Example("Bump and push the tag to the remote", "tag minor --push"),
+		cli.Example("Do not prompt for confirmation", "tag minor --push --force"),
+		cli.Allow(cli.NoArgs()),
+		cli.Flag(&push, "push", 'p', false, "Push the tag to the remote"),
+		cli.Flag(&force, "force", 'f', false, "Bypass confirmation prompt"),
+		cli.Flag(&dryRun, "dry-run", 'd', false, "Print what would have happened"),
+		cli.Run(func(cmd *cli.Command, args []string) error {
 			cwd, err := os.Getwd()
 			if err != nil {
 				return err
@@ -56,13 +52,11 @@ func buildMinor() *cobra.Command {
 				return err
 			}
 			return tag.Minor(push, force, dryRun)
-		},
+		}),
+	)
+	if err != nil {
+		return nil, err
 	}
 
-	flags := cmd.Flags()
-	flags.BoolVarP(&push, "push", "p", false, "Push the tag to the remote")
-	flags.BoolVarP(&force, "force", "f", false, "Bypass confirmation prompt")
-	flags.BoolVarP(&dryRun, "dry-run", "d", false, "Print what would have happened")
-
-	return cmd
+	return cmd, nil
 }
