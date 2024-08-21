@@ -38,6 +38,7 @@ func buildMajor() (*cli.Command, error) {
 		cli.Example("Bump the major version", "tag major"),
 		cli.Example("Bump and push the tag to the remote", "tag major --push"),
 		cli.Example("Do not prompt for confirmation", "tag major --push --force"),
+		cli.Allow(cli.NoArgs()),
 		cli.Flag(&push, "push", 'p', false, "Push the tag to the remote"),
 		cli.Flag(&force, "force", 'f', false, "Bypass confirmation prompt"),
 		cli.Flag(&dryRun, "dry-run", 'd', false, "Print what would have happened"),
