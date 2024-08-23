@@ -1,7 +1,7 @@
 github.com/AlecAivazis/survey/v2 v2.3.7 h1:6I/u8FvytdGsgonrYsVn2t8t4QiRnh6QSTqkkhIiSjQ=
 github.com/AlecAivazis/survey/v2 v2.3.7/go.mod h1:xUTIdE4KCOIjsBAE1JYsUPoCqYdZ1reCfTwbto0Fduo=
-github.com/FollowTheProcess/cli v0.2.0 h1:EG4fzQde/Rmualfn+EUlEjaPdavB2bbVhHKyNrzO0qQ=
-github.com/FollowTheProcess/cli v0.2.0/go.mod h1:B9njo1+39vtAs8erLwKDo2FshXARKNEL5CHIwHkDkJk=
+github.com/FollowTheProcess/cli v0.3.0 h1:/eMtFST1Ok+4UyhlUFFnGeAB6pH8nq9LrwjFxpFWvB0=
+github.com/FollowTheProcess/cli v0.3.0/go.mod h1:B9njo1+39vtAs8erLwKDo2FshXARKNEL5CHIwHkDkJk=
 github.com/FollowTheProcess/msg v1.1.0 h1:v5Whr22gUMKZ+YNtYkCAfc3TxlyIEJywRoZuLIJSbFg=
 github.com/FollowTheProcess/msg v1.1.0/go.mod h1:Paf83GuUx6SDTiKa2ffODVeUVoXBGP07PRmFlbmAazY=
 github.com/FollowTheProcess/semver v0.1.1 h1:gO8D7adZuJKy5/94infk4Y77C1eVL5MdWBhahjstcf8=
