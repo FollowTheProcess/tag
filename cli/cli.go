@@ -12,30 +12,6 @@ var (
 
 // Build builds and returns the tag CLI.
 func Build() (*cli.Command, error) {
-	initCmd, err := buildInit()
-	if err != nil {
-		return nil, err
-	}
-	latestCmd, err := buildLatest()
-	if err != nil {
-		return nil, err
-	}
-	listCmd, err := buildList()
-	if err != nil {
-		return nil, err
-	}
-	majorCmd, err := buildMajor()
-	if err != nil {
-		return nil, err
-	}
-	minorCmd, err := buildMinor()
-	if err != nil {
-		return nil, err
-	}
-	patchCmd, err := buildPatch()
-	if err != nil {
-		return nil, err
-	}
 	cmd, err := cli.New(
 		"tag",
 		cli.Short("The all in one semver management tool 🛠️"),
@@ -47,15 +23,14 @@ func Build() (*cli.Command, error) {
 		cli.BuildDate(buildDate),
 		cli.Allow(cli.NoArgs()),
 		cli.SubCommands(
-			initCmd,
-			latestCmd,
-			listCmd,
-			majorCmd,
-			minorCmd,
-			patchCmd,
+			buildInit,
+			buildLatest,
+			buildList,
+			buildMajor,
+			buildMinor,
+			buildPatch,
 		),
 	)
-	// TODO(@FollowTheProcess): Subcommands
 	if err != nil {
 		return nil, err
 	}
