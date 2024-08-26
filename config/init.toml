@@ -1,0 +1,38 @@
+# The version of your project, tag will auto bump this for you so no need to touch it yourself
+version = "0.1.0"
+
+# Git config, here you can specify what you consider your default branch and
+# the messages tag will use when making bump commits.
+# 
+# The placeholders {{.Current}} and {{.Next}} are available for templating
+# and will be set to the current and next version (after the requested bump)
+[git]
+default-branch = "main"
+message-template = "Bump version {{.Current}} -> {{.Next}}"
+tag-template = "v{{.Next}}"
+
+# Hooks are shell commands that tag will run for you at various stages of
+# the bumping process, for example to regenerate a man page with the new
+# version once it's been bumped.
+[hooks]
+pre-replace = "echo 'I run before doing anything'"
+pre-commit = "echo 'I run after replacing but before committing changes'"
+pre-tag = "echo 'I run after committing changes but before tagging'"
+pre-push = "echo 'I run after tagging, but before pushing'"
+
+
+# List of files to perform search and replace on, there is a
+# {{.Current}} variable available for templating which will be
+# set to the current (pre-bump) version.
+# 
+# The "replace" string is inferred from "search":
+# search = 'version = "{{.Current}}"'
+# Will produce a "replace" of:
+# replace = 'version = "{{.Next}}"
+[[file]]
+path = "pyproject.toml"
+search = 'version = "{{.Current}}"'
+
+[[file]]
+path = "README.md"
+search = "My project, version {{.Current}}"
