@@ -106,34 +106,9 @@ func (a App) Init(cwd string, force bool) error {
 		return err
 	}
 
-	cfg := config.Config{
-		Version: "0.1.0",
-		Git: config.Git{
-			DefaultBranch:   "main",
-			MessageTemplate: "Bump version {{.Current}} -> {{.Next}}",
-			TagTemplate:     "v{{.Next}}",
-		},
-		Hooks: config.Hooks{
-			PreReplace: "echo 'I run before doing anything'",
-			PreCommit:  "echo 'I run after replacing but before committing changes'",
-			PreTag:     "echo 'I run after committing changes but before tagging'",
-			PrePush:    "echo 'I run after tagging, but before pushing'",
-		},
-		Files: []config.File{
-			{
-				Path:   "pyproject.toml",
-				Search: `version = "{{.Current}}"`,
-			},
-			{
-				Path:   "README.md",
-				Search: "My project, version {{.Current}}",
-			},
-		},
-	}
-
 	if !configFileExists {
 		// No config file, just go ahead and make one
-		if err := cfg.Save(path); err != nil {
+		if err := os.WriteFile(path, []byte(config.Init()), os.ModePerm); err != nil {
 			return err
 		}
 		msg.Fsuccess(a.Stdout, "Config file written to %s", path)
@@ -158,7 +133,7 @@ func (a App) Init(cwd string, force bool) error {
 	}
 
 	// User has either confirmed or passed --force
-	if err := cfg.Save(path); err != nil {
+	if err := os.WriteFile(path, []byte(config.Init()), os.ModePerm); err != nil {
 		return err
 	}
 	msg.Fsuccess(a.Stdout, "Config file written to %s", path)

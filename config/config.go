@@ -7,6 +7,7 @@ package config
 
 import (
 	"bytes"
+	_ "embed"
 	"errors"
 	"fmt"
 	"os"
@@ -15,6 +16,11 @@ import (
 
 	"github.com/pelletier/go-toml/v2"
 )
+
+// initContents is the contents of the initial config file created by `tag init`
+//
+//go:embed init.toml
+var initContents string
 
 // Filename is the canonical file name for tag's config file.
 const Filename = ".tag.toml"
@@ -160,4 +166,9 @@ func (c *Config) Render(current, next string) error {
 
 	c.Files = rendered
 	return nil
+}
+
+// Init returns a toml encoded string of the initial tag config.
+func Init() string {
+	return initContents
 }
