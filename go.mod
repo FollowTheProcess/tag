@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
-	github.com/FollowTheProcess/cli v0.4.0
+	github.com/FollowTheProcess/cli v0.4.1
 	github.com/FollowTheProcess/msg v1.2.0
 	github.com/FollowTheProcess/semver v0.1.1
 	github.com/pelletier/go-toml/v2 v2.2.3
