@@ -1,13 +1,13 @@
 github.com/AlecAivazis/survey/v2 v2.3.7 h1:6I/u8FvytdGsgonrYsVn2t8t4QiRnh6QSTqkkhIiSjQ=
 github.com/AlecAivazis/survey/v2 v2.3.7/go.mod h1:xUTIdE4KCOIjsBAE1JYsUPoCqYdZ1reCfTwbto0Fduo=
-github.com/FollowTheProcess/cli v0.7.0 h1:Z7UQoqIjXUus0TQ/p44SWt7RUAfx81bIkQO9X5pyxac=
-github.com/FollowTheProcess/cli v0.7.0/go.mod h1:C7TPV83uiB2GMelPXd3kaPQSpPD4TFXwTMOqpiQA5bM=
+github.com/FollowTheProcess/cli v0.8.0 h1:1ktn1UpLAdFBs3FNYVqhmW3x2u2yDLGOfn7HytTmyxk=
+github.com/FollowTheProcess/cli v0.8.0/go.mod h1:s6L0xJ8A7UxkXDpC7WDVcPXUVs5e6JtAeeyoRXAIp0U=
 github.com/FollowTheProcess/msg v1.2.0 h1:D9u/fCbNNkIeTt19OQlUU6O8tCQt6fBHcdaXuvYF2S8=
 github.com/FollowTheProcess/msg v1.2.0/go.mod h1:MfbeMtID8OAN3/p+Vorjw+EV/EdTy/NLSWqRYdScNDQ=
 github.com/FollowTheProcess/semver v0.1.1 h1:gO8D7adZuJKy5/94infk4Y77C1eVL5MdWBhahjstcf8=
 github.com/FollowTheProcess/semver v0.1.1/go.mod h1:4hkF/57Zbl0j726/OOmxWS6nE7NgAxzlRANqwt8mZTU=
-github.com/FollowTheProcess/test v0.15.0 h1:Sx6hha6oRmtk4REPiijmmhnVbLqpsx2EhSK45zMoXik=
-github.com/FollowTheProcess/test v0.15.0/go.mod h1:WwdigHlEGoXEzt8n/VGpqrNkD3j5gHsqBjYduqTqRE0=
+github.com/FollowTheProcess/test v0.16.0 h1:AYQr+aQpIBNGn0P2ubt20b0c3DMVwLX/b4rV948kprY=
+github.com/FollowTheProcess/test v0.16.0/go.mod h1:WwdigHlEGoXEzt8n/VGpqrNkD3j5gHsqBjYduqTqRE0=
 github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2 h1:+vx7roKuyA63nhn5WAunQHLTznkw5W8b1Xc0dNjp83s=
 github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2/go.mod h1:HBCaDeC1lPdgDeDbhX8XFpy1jqjK0IBG8W5K+xYqA0w=
 github.com/aymanbagabas/go-udiff v0.2.0 h1:TK0fH4MteXUDspT88n8CKzvK0X9O2xu9yQjWpi6yML8=
