@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
-	github.com/FollowTheProcess/cli v0.10.0
+	github.com/FollowTheProcess/cli v0.11.0
 	github.com/FollowTheProcess/msg v1.5.0
 	github.com/FollowTheProcess/semver v0.1.1
 	github.com/pelletier/go-toml/v2 v2.2.3
@@ -12,7 +12,7 @@ require (
 )
 
 require (
-	github.com/FollowTheProcess/hue v0.3.0 // indirect
+	github.com/FollowTheProcess/hue v0.3.1 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
