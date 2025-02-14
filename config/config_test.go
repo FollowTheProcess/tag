@@ -300,12 +300,11 @@ func TestSave(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tmp, err := os.CreateTemp("", "config.toml*")
+			tmp, err := os.CreateTemp(t.TempDir(), "config.toml*")
 			if err != nil {
 				t.Fatalf("could not create temp file: %v", err)
 			}
 			tmp.Close()
-			defer os.RemoveAll(tmp.Name())
 			if err = tt.cfg.Save(tmp.Name()); err != nil {
 				t.Fatalf("Save returned an error: %v", err)
 			}

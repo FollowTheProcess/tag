@@ -25,6 +25,8 @@ var initContents string
 // Filename is the canonical file name for tag's config file.
 const Filename = ".tag.toml"
 
+const filePermissions = 0o644
+
 // ErrNoConfigFile is the signal that no config file exists.
 var ErrNoConfigFile = errors.New("config file not found")
 
@@ -89,12 +91,12 @@ func Load(path string) (Config, error) {
 }
 
 // Save saves the config to disk.
-func (c Config) Save(path string) error {
+func (c *Config) Save(path string) error {
 	raw, err := toml.Marshal(c)
 	if err != nil {
 		return fmt.Errorf("toml serialise error: %w", err)
 	}
-	if err := os.WriteFile(path, raw, os.ModePerm); err != nil {
+	if err := os.WriteFile(path, raw, filePermissions); err != nil {
 		return fmt.Errorf("could not write %s: %w", path, err)
 	}
 	return nil

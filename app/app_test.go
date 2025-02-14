@@ -23,19 +23,13 @@ const (
 
 // setup creates a tempdir, initialises a git repo with a README to do
 // search and replace on, adds an initial tag v0.1.0 as well as a tag config
-// returns the path to the root of the test repo as well as a teardown
-// function that removes the entire directory at the end of the test.
-// Usage in a test would be:
+// returns the path to the root of the test repo.
 //
-//	tmp, teardown := setup(t)
-//	defer teardown()
-func setup(t *testing.T) (string, func()) {
+// The temp dir is self cleaning.
+func setup(t *testing.T) string {
 	t.Helper()
-	tmp, err := os.MkdirTemp("", "test")
-	if err != nil {
-		t.Fatalf("Could not create temp dir: %v", err)
-	}
-	err = os.WriteFile(filepath.Join(tmp, "README.md"), []byte(initialReadmeContent), 0o755)
+	tmp := t.TempDir()
+	err := os.WriteFile(filepath.Join(tmp, "README.md"), []byte(initialReadmeContent), 0o755)
 	if err != nil {
 		t.Fatalf("Could not create README.md: %v", err)
 	}
@@ -112,9 +106,7 @@ func setup(t *testing.T) (string, func()) {
 		t.Fatalf("Error issuing the first tag to test git repo: %s", string(stdout))
 	}
 
-	tearDown := func() { os.RemoveAll(tmp) }
-
-	return tmp, tearDown
+	return tmp
 }
 
 // newTestApp creates an app set up for testing.
@@ -136,17 +128,13 @@ func newTestApp(out io.Writer) App {
 }
 
 func TestAppLatest(t *testing.T) {
-	tmp, teardown := setup(t)
-	defer teardown()
+	tmp := setup(t)
 
-	err := os.Chdir(tmp)
-	if err != nil {
-		t.Fatalf("Could not change dir to tmp: %v", err)
-	}
+	t.Chdir(tmp)
 	out := &bytes.Buffer{}
 	app := newTestApp(out)
 
-	err = app.Latest()
+	err := app.Latest()
 	if err != nil {
 		t.Fatalf("app.Latest returned an error: %v", err)
 	}
@@ -157,17 +145,13 @@ func TestAppLatest(t *testing.T) {
 }
 
 func TestAppList(t *testing.T) {
-	tmp, teardown := setup(t)
-	defer teardown()
+	tmp := setup(t)
 
-	err := os.Chdir(tmp)
-	if err != nil {
-		t.Fatalf("Could not change dir to tmp: %v", err)
-	}
+	t.Chdir(tmp)
 	out := &bytes.Buffer{}
 	app := newTestApp(out)
 
-	err = app.List(10)
+	err := app.List(10)
 	if err != nil {
 		t.Fatalf("app.List returned an error: %v", err)
 	}
@@ -178,13 +162,9 @@ func TestAppList(t *testing.T) {
 }
 
 func TestAppMajor(t *testing.T) {
-	tmp, teardown := setup(t)
-	defer teardown()
+	tmp := setup(t)
 
-	err := os.Chdir(tmp)
-	if err != nil {
-		t.Fatalf("Could not change dir to tmp: %v", err)
-	}
+	t.Chdir(tmp)
 	appOut := &bytes.Buffer{}
 	appErr := &bytes.Buffer{}
 	app, err := New(tmp, appOut, appErr)
@@ -257,13 +237,9 @@ func TestAppMajor(t *testing.T) {
 }
 
 func TestAppMajorDryRun(t *testing.T) {
-	tmp, teardown := setup(t)
-	defer teardown()
+	tmp := setup(t)
 
-	err := os.Chdir(tmp)
-	if err != nil {
-		t.Fatalf("Could not change dir to tmp: %v", err)
-	}
+	t.Chdir(tmp)
 	appOut := &bytes.Buffer{}
 	appErr := &bytes.Buffer{}
 	app, err := New(tmp, appOut, appErr)
@@ -317,13 +293,9 @@ func TestAppMajorDryRun(t *testing.T) {
 }
 
 func TestAppMinor(t *testing.T) {
-	tmp, teardown := setup(t)
-	defer teardown()
+	tmp := setup(t)
 
-	err := os.Chdir(tmp)
-	if err != nil {
-		t.Fatalf("Could not change dir to tmp: %v", err)
-	}
+	t.Chdir(tmp)
 	appOut := &bytes.Buffer{}
 	appErr := &bytes.Buffer{}
 	app, err := New(tmp, appOut, appErr)
@@ -396,13 +368,9 @@ func TestAppMinor(t *testing.T) {
 }
 
 func TestAppMinorDryRun(t *testing.T) {
-	tmp, teardown := setup(t)
-	defer teardown()
+	tmp := setup(t)
 
-	err := os.Chdir(tmp)
-	if err != nil {
-		t.Fatalf("Could not change dir to tmp: %v", err)
-	}
+	t.Chdir(tmp)
 	appOut := &bytes.Buffer{}
 	appErr := &bytes.Buffer{}
 	app, err := New(tmp, appOut, appErr)
@@ -456,13 +424,9 @@ func TestAppMinorDryRun(t *testing.T) {
 }
 
 func TestAppPatch(t *testing.T) {
-	tmp, teardown := setup(t)
-	defer teardown()
+	tmp := setup(t)
 
-	err := os.Chdir(tmp)
-	if err != nil {
-		t.Fatalf("Could not change dir to tmp: %v", err)
-	}
+	t.Chdir(tmp)
 	appOut := &bytes.Buffer{}
 	appErr := &bytes.Buffer{}
 	app, err := New(tmp, appOut, appErr)
@@ -535,13 +499,9 @@ func TestAppPatch(t *testing.T) {
 }
 
 func TestAppPatchDryRun(t *testing.T) {
-	tmp, teardown := setup(t)
-	defer teardown()
+	tmp := setup(t)
 
-	err := os.Chdir(tmp)
-	if err != nil {
-		t.Fatalf("Could not change dir to tmp: %v", err)
-	}
+	t.Chdir(tmp)
 	appOut := &bytes.Buffer{}
 	appErr := &bytes.Buffer{}
 	app, err := New(tmp, appOut, appErr)

@@ -32,10 +32,7 @@ func TestExecCommandHelper(t *testing.T) {
 		return
 	}
 
-	tmp, err := os.MkdirTemp("", "cov*")
-	if err != nil {
-		t.Fatalf("could not create temp dir: %v", err)
-	}
+	tmp := t.TempDir()
 	t.Setenv("GOCOVERDIR", tmp)
 
 	fmt.Fprint(os.Stdout, os.Getenv("STDOUT"))
