@@ -143,6 +143,7 @@ linters-settings:
           - fmt\.(Fp|P)rint(ln|f)?
           - strings.Builder.Write(String|Byte)?
           - bytes.Buffer.Write(String|Byte)?
+          - os.RemoveAll
 
       - name: unused-parameter
         disabled: true # Leaves a mess of _ in test cases etc.

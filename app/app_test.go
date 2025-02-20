@@ -113,7 +113,7 @@ func setup(t *testing.T) (string, func()) {
 	}
 
 	tearDown := func() {
-		os.RemoveAll(tmp) //nolint: revive // Unhandled error
+		os.RemoveAll(tmp)
 	}
 
 	return tmp, tearDown
