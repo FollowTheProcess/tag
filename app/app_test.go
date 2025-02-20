@@ -112,7 +112,7 @@ func setup(t *testing.T) (string, func()) {
 		t.Fatalf("Error issuing the first tag to test git repo: %s", string(stdout))
 	}
 
-	tearDown := func() { os.RemoveAll(tmp) }
+	tearDown := func() { os.RemoveAll(tmp) } //nolint: revive // Unhandled error
 
 	return tmp, tearDown
 }

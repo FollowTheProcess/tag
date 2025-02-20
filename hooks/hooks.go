@@ -34,7 +34,7 @@ func Run(stage HookStage, cmd string, stdout, stderr io.Writer) error {
 	}
 	prog, err := syntax.NewParser().Parse(strings.NewReader(cmd), "")
 	if err != nil {
-		return fmt.Errorf("Command %q in hook stage %s not valid shell syntax: %w", cmd, stage, err)
+		return fmt.Errorf("command %q in hook stage %s not valid shell syntax: %w", cmd, stage, err)
 	}
 
 	execHandler := func(interp.ExecHandlerFunc) interp.ExecHandlerFunc {

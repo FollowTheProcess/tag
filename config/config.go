@@ -28,8 +28,10 @@ const Filename = ".tag.toml"
 // ErrNoConfigFile is the signal that no config file exists.
 var ErrNoConfigFile = errors.New("config file not found")
 
+const filePermissions = 0o644
+
 // Config represents tags configuration settings.
-type Config struct {
+type Config struct { //nolint: recvcheck // In this case it makes sense
 	Version string `toml:"version"`
 	Git     Git    `toml:"git,omitempty"`
 	Hooks   Hooks  `toml:"hooks,omitempty"`
@@ -94,7 +96,7 @@ func (c Config) Save(path string) error {
 	if err != nil {
 		return fmt.Errorf("toml serialise error: %w", err)
 	}
-	if err := os.WriteFile(path, raw, os.ModePerm); err != nil {
+	if err := os.WriteFile(path, raw, filePermissions); err != nil {
 		return fmt.Errorf("could not write %s: %w", path, err)
 	}
 	return nil
