@@ -23,6 +23,8 @@ import (
 // ErrAborted is returned whenever an action is aborted by the user.
 var ErrAborted = errors.New("Aborted")
 
+const filePermissions = 0o644
+
 // App represents the tag program.
 type App struct {
 	Stdout      io.Writer
@@ -69,7 +71,7 @@ func (a App) List(limit int) error {
 		return err
 	}
 	if limit <= 0 {
-		return fmt.Errorf("--limit must be a positive integer")
+		return errors.New("--limit must be a positive integer")
 	}
 	tags, limitHit, err := git.ListTags(limit)
 	if err != nil {
@@ -108,7 +110,7 @@ func (a App) Init(cwd string, force bool) error {
 
 	if !configFileExists {
 		// No config file, just go ahead and make one
-		if err := os.WriteFile(path, []byte(config.Init()), os.ModePerm); err != nil {
+		if err := os.WriteFile(path, []byte(config.Init()), filePermissions); err != nil {
 			return err
 		}
 		msg.Fsuccess(a.Stdout, "Config file written to %s", path)
@@ -133,7 +135,7 @@ func (a App) Init(cwd string, force bool) error {
 	}
 
 	// User has either confirmed or passed --force
-	if err := os.WriteFile(path, []byte(config.Init()), os.ModePerm); err != nil {
+	if err := os.WriteFile(path, []byte(config.Init()), filePermissions); err != nil {
 		return err
 	}
 	msg.Fsuccess(a.Stdout, "Config file written to %s", path)
@@ -218,7 +220,7 @@ func (a App) replace(dryRun bool) error {
 		}
 
 		if !bytes.Contains(contents, []byte(file.Search)) {
-			return fmt.Errorf("Could not find %q in %s", file.Search, file.Path)
+			return fmt.Errorf("could not find %q in %s", file.Search, file.Path)
 		}
 
 		if dryRun {
@@ -227,7 +229,7 @@ func (a App) replace(dryRun bool) error {
 			msg.Finfo(a.Stdout, "Replacing contents in %s", file.Path)
 			newContent := bytes.ReplaceAll(contents, []byte(file.Search), []byte(file.Replace))
 
-			if err = os.WriteFile(file.Path, newContent, os.ModePerm); err != nil {
+			if err = os.WriteFile(file.Path, newContent, filePermissions); err != nil {
 				return err
 			}
 		}
@@ -268,7 +270,7 @@ func (a App) getBumpVersions(typ bumpType) (current, next semver.Version, err er
 	case patch:
 		next = semver.BumpPatch(current)
 	default:
-		return semver.Version{}, semver.Version{}, fmt.Errorf("Unrecognised bump type: %v", typ)
+		return semver.Version{}, semver.Version{}, fmt.Errorf("unrecognised bump type: %v", typ)
 	}
 
 	return current, next, nil
@@ -360,7 +362,7 @@ func (a App) runHook(stage hooks.HookStage, dryRun bool) error {
 	case hooks.StagePrePush:
 		hookCmd = a.Cfg.Hooks.PrePush
 	default:
-		return fmt.Errorf("Unhandled hook type: %s", stage)
+		return fmt.Errorf("unhandled hook type: %s", stage)
 	}
 
 	if hookCmd == "" {
@@ -379,7 +381,7 @@ func (a App) runHook(stage hooks.HookStage, dryRun bool) error {
 // a git repo.
 func (a App) ensureRepo() error {
 	if !git.IsRepo() {
-		return errors.New("Not a git repo")
+		return errors.New("not a git repo")
 	}
 	return nil
 }
@@ -392,7 +394,7 @@ func (a App) ensureBumpable() error {
 		return err
 	}
 	if dirty {
-		return errors.New("Working tree is not clean")
+		return errors.New("working tree is not clean")
 	}
 
 	branch, err := git.Branch()
@@ -405,7 +407,7 @@ func (a App) ensureBumpable() error {
 	}
 
 	if branch != a.Cfg.Git.DefaultBranch {
-		return fmt.Errorf("Not on default branch (%s), currently on: %s", a.Cfg.Git.DefaultBranch, branch)
+		return fmt.Errorf("not on default branch (%s), currently on: %s", a.Cfg.Git.DefaultBranch, branch)
 	}
 
 	return nil

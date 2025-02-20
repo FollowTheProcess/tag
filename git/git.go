@@ -11,7 +11,7 @@ import (
 
 var (
 	gitCommand     = exec.Command                // An internal reassignment of exec.Command for testing
-	ErrNoTagsFound = errors.New("No tags found") // ErrNoTagsFound is the signal that the current repo has no tags
+	ErrNoTagsFound = errors.New("no tags found") // ErrNoTagsFound is the signal that the current repo has no tags
 )
 
 // Commit performs a git commit with a message.
