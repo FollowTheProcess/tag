@@ -7,7 +7,7 @@ require (
 	github.com/FollowTheProcess/cli v0.13.0
 	github.com/FollowTheProcess/msg v1.8.0
 	github.com/FollowTheProcess/semver v0.1.1
-	github.com/pelletier/go-toml/v2 v2.2.3
+	github.com/pelletier/go-toml/v2 v2.2.4
 	mvdan.cc/sh/v3 v3.11.0
 )
 
