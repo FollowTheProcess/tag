@@ -12,12 +12,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/AlecAivazis/survey/v2"
 	"github.com/FollowTheProcess/msg"
 	"github.com/FollowTheProcess/semver"
 	"github.com/FollowTheProcess/tag/config"
 	"github.com/FollowTheProcess/tag/git"
 	"github.com/FollowTheProcess/tag/hooks"
+	"github.com/charmbracelet/huh"
 )
 
 // ErrAborted is returned whenever an action is aborted by the user.
@@ -119,12 +119,8 @@ func (a App) Init(cwd string, force bool) error {
 
 	// Config file does exist, let's ask for overwrite and check force
 	if !force {
-		confirm := &survey.Confirm{
-			Message: fmt.Sprintf("Config file %s already exists. Overwrite?", path),
-			Default: false,
-		}
-		err := survey.AskOne(confirm, &force)
-		if err != nil {
+		confirm := huh.NewConfirm().Title(fmt.Sprintf("Config file %s already exists. Overwrite?", path)).Value(&force)
+		if err := confirm.Run(); err != nil {
 			return err
 		}
 	}
@@ -291,12 +287,8 @@ func (a App) bump(typ bumpType, push, force, dryRun bool) error {
 	}
 
 	if !force {
-		confirm := &survey.Confirm{
-			Message: fmt.Sprintf("This will bump %q to %q. Are you sure?", current, next),
-			Default: false,
-		}
-		err := survey.AskOne(confirm, &force)
-		if err != nil {
+		confirm := huh.NewConfirm().Title(fmt.Sprintf("This will bump %q to %q. Are you sure?", current, next)).Value(&force)
+		if err := confirm.Run(); err != nil {
 			return err
 		}
 	}
