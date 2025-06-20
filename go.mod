@@ -3,7 +3,7 @@ module github.com/FollowTheProcess/tag
 go 1.24
 
 require (
-	github.com/FollowTheProcess/cli v0.13.0
+	github.com/FollowTheProcess/cli v0.14.0
 	github.com/FollowTheProcess/msg v1.8.0
 	github.com/FollowTheProcess/semver v0.1.1
 	github.com/charmbracelet/huh v0.7.0
