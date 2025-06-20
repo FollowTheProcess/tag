@@ -3,8 +3,8 @@ package cli
 import (
 	"os"
 
-	"github.com/FollowTheProcess/cli"
-	"github.com/FollowTheProcess/tag/app"
+	"go.followtheprocess.codes/cli"
+	"go.followtheprocess.codes/tag/app"
 )
 
 // buildInit builds and returns the init subcommand.

@@ -16,10 +16,10 @@ builds:
     binary: tag
     ldflags:
       - -s -w
-      - -X github.com/FollowTheProcess/tag/cli.version={{.Version}}
-      - -X github.com/FollowTheProcess/tag/cli.commit={{.Commit}}
-      - -X github.com/FollowTheProcess/tag/cli.buildDate={{.Date}}
-      - -X github.com/FollowTheProcess/tag/cli.builtBy=GoReleaser
+      - -X go.followtheprocess.codes/tag/cli.version={{.Version}}
+      - -X go.followtheprocess.codes/tag/cli.commit={{.Commit}}
+      - -X go.followtheprocess.codes/tag/cli.buildDate={{.Date}}
+      - -X go.followtheprocess.codes/tag/cli.builtBy=GoReleaser
     env:
       - CGO_ENABLED=0
     goos:

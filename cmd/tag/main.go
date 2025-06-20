@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/FollowTheProcess/msg"
-	"github.com/FollowTheProcess/tag/cli"
+	"go.followtheprocess.codes/msg"
+	"go.followtheprocess.codes/tag/cli"
 )
 
 func main() {

@@ -37,7 +37,7 @@ No more 🚀 `tag` has you covered!
 Compiled binaries for all supported platforms can be found in the [GitHub release]. There is also a [homebrew] tap:
 
 ```shell
-brew install FollowTheProcess/tap/tag
+brew install --cask FollowTheProcess/tap/tag
 ```
 
 ## Usage

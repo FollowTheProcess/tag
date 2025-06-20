@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/FollowTheProcess/tag/config"
+	"go.followtheprocess.codes/tag/config"
 )
 
 func TestLoad(t *testing.T) {
