@@ -10,8 +10,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/FollowTheProcess/tag/config"
-	"github.com/FollowTheProcess/tag/git"
+	"go.followtheprocess.codes/tag/config"
+	"go.followtheprocess.codes/tag/git"
 )
 
 const (

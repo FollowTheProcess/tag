@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/FollowTheProcess/tag/hooks"
+	"go.followtheprocess.codes/tag/hooks"
 )
 
 func TestRunOk(t *testing.T) {

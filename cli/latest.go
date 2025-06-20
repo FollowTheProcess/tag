@@ -3,8 +3,8 @@ package cli
 import (
 	"os"
 
-	"github.com/FollowTheProcess/cli"
-	"github.com/FollowTheProcess/tag/app"
+	"go.followtheprocess.codes/cli"
+	"go.followtheprocess.codes/tag/app"
 )
 
 // buildLatest builds and returns the latest subcommand.

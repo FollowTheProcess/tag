@@ -1,7 +1,7 @@
 // Package cli implements tags command line interface.
 package cli
 
-import "github.com/FollowTheProcess/cli"
+import "go.followtheprocess.codes/cli"
 
 // These are all set at compile time.
 var (

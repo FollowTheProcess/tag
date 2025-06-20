@@ -12,12 +12,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/FollowTheProcess/msg"
-	"github.com/FollowTheProcess/semver"
-	"github.com/FollowTheProcess/tag/config"
-	"github.com/FollowTheProcess/tag/git"
-	"github.com/FollowTheProcess/tag/hooks"
 	"github.com/charmbracelet/huh"
+	"go.followtheprocess.codes/msg"
+	"go.followtheprocess.codes/semver"
+	"go.followtheprocess.codes/tag/config"
+	"go.followtheprocess.codes/tag/git"
+	"go.followtheprocess.codes/tag/hooks"
 )
 
 // ErrAborted is returned whenever an action is aborted by the user.
