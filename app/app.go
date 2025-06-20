@@ -287,7 +287,7 @@ func (a App) bump(typ bumpType, push, force, dryRun bool) error {
 	}
 
 	if !force {
-		confirm := huh.NewConfirm().Title(fmt.Sprintf("This will bump %q to %q. Are you sure?", current, next)).Value(&force)
+		confirm := huh.NewConfirm().Inline(true).Title(fmt.Sprintf("This will bump %q to %q. Are you sure?", current, next)).Value(&force)
 		if err := confirm.Run(); err != nil {
 			return err
 		}
