@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/FollowTheProcess/cli v0.13.0
-	github.com/FollowTheProcess/msg v1.8.0
+	github.com/FollowTheProcess/msg v1.9.1
 	github.com/FollowTheProcess/semver v0.1.1
 	github.com/charmbracelet/huh v0.7.0
 	github.com/pelletier/go-toml/v2 v2.2.4
