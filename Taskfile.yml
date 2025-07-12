@@ -57,6 +57,12 @@ tasks:
       - go test -race -cover -covermode atomic -coverprofile {{ .COV_DATA }} ./...
       - go tool cover -html {{ .COV_DATA }}
 
+  update:
+    desc: Updates dependencies in go.mod and go.sum
+    cmds:
+      - go get -u ./...
+      - go mod tidy
+
   check:
     desc: Run tests and linting in one
     cmds:
