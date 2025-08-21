@@ -39,8 +39,6 @@ homebrew_casks:
     directory: Casks
     description: The all in one semver management tool
     homepage: https://github.com/FollowTheProcess/tag
-    conflicts:
-      - formula: tag
     commit_author:
       name: Tom Fleet
       email: me@followtheprocess.codes
