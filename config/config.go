@@ -58,7 +58,7 @@ type File struct {
 	Path   string `toml:"path,omitempty"`
 	Search string `toml:"search,omitempty"`
 
-	Replace string `toml:"-,omitempty"` // Not part of the config, inferred from `Search`
+	Replace string `toml:"-"` // Not part of the config, inferred from `Search`
 }
 
 // Load reads Config from a file.
