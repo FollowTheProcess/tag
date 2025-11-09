@@ -21,7 +21,6 @@ func Build() (*cli.Command, error) {
 		cli.Version(version),
 		cli.Commit(commit),
 		cli.BuildDate(buildDate),
-		cli.Allow(cli.NoArgs()),
 		cli.SubCommands(
 			buildInit,
 			buildLatest,

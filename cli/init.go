@@ -15,9 +15,8 @@ func buildInit() (*cli.Command, error) {
 		cli.Short("Create a new tag config file"),
 		cli.Example("Create a config file", "tag init"),
 		cli.Example("Overwrite an existing one", "tag init --force"),
-		cli.Allow(cli.NoArgs()),
 		cli.Flag(&force, "force", 'f', false, "Overwrite an existing config file"),
-		cli.Run(func(cmd *cli.Command, args []string) error {
+		cli.Run(func(cmd *cli.Command) error {
 			cwd, err := os.Getwd()
 			if err != nil {
 				return err

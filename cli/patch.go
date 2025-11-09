@@ -38,11 +38,10 @@ func buildPatch() (*cli.Command, error) {
 		cli.Example("Bump the patch version", "tag patch"),
 		cli.Example("Bump and push the tag to the remote", "tag patch --push"),
 		cli.Example("Do not prompt for confirmation", "tag patch --push --force"),
-		cli.Allow(cli.NoArgs()),
 		cli.Flag(&push, "push", 'p', false, "Push the tag to the remote"),
 		cli.Flag(&force, "force", 'f', false, "Bypass confirmation prompt"),
 		cli.Flag(&dryRun, "dry-run", 'd', false, "Print what would have happened"),
-		cli.Run(func(cmd *cli.Command, args []string) error {
+		cli.Run(func(cmd *cli.Command) error {
 			cwd, err := os.Getwd()
 			if err != nil {
 				return err

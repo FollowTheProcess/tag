@@ -35,7 +35,8 @@ builds:
 
 homebrew_casks:
   - name: tag
-    binary: tag
+    binaries:
+      - tag
     directory: Casks
     description: The all in one semver management tool
     homepage: https://github.com/FollowTheProcess/tag
