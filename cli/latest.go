@@ -13,8 +13,7 @@ func buildLatest() (*cli.Command, error) {
 		"latest",
 		cli.Short("Show latest semver tag"),
 		cli.Example("Show the latest", "tag latest"),
-		cli.Allow(cli.NoArgs()),
-		cli.Run(func(cmd *cli.Command, args []string) error {
+		cli.Run(func(cmd *cli.Command) error {
 			cwd, err := os.Getwd()
 			if err != nil {
 				return err
