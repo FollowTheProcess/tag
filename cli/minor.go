@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"os"
 
 	"go.followtheprocess.codes/cli"
@@ -38,10 +39,10 @@ func buildMinor() (*cli.Command, error) {
 		cli.Example("Bump the minor version", "tag minor"),
 		cli.Example("Bump and push the tag to the remote", "tag minor --push"),
 		cli.Example("Do not prompt for confirmation", "tag minor --push --force"),
-		cli.Flag(&push, "push", 'p', false, "Push the tag to the remote"),
-		cli.Flag(&force, "force", 'f', false, "Bypass confirmation prompt"),
-		cli.Flag(&dryRun, "dry-run", 'd', false, "Print what would have happened"),
-		cli.Run(func(cmd *cli.Command) error {
+		cli.Flag(&push, "push", 'p', "Push the tag to the remote"),
+		cli.Flag(&force, "force", 'f', "Bypass confirmation prompt"),
+		cli.Flag(&dryRun, "dry-run", 'd', "Print what would have happened"),
+		cli.Run(func(ctx context.Context, cmd *cli.Command) error {
 			cwd, err := os.Getwd()
 			if err != nil {
 				return err

@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"os"
 
 	"go.followtheprocess.codes/cli"
@@ -19,8 +20,8 @@ func buildList() (*cli.Command, error) {
 		cli.Short("Show semver tags in order"),
 		cli.Example("Show all tags", "tag list"),
 		cli.Example("Limit to a max number", "tag list --limit 15"),
-		cli.Flag(&limit, "limit", 'l', defaultLimit, "Max number of tags to show"),
-		cli.Run(func(cmd *cli.Command) error {
+		cli.Flag(&limit, "limit", 'l', "Max number of tags to show", cli.FlagDefault(defaultLimit)),
+		cli.Run(func(ctx context.Context, cmd *cli.Command) error {
 			cwd, err := os.Getwd()
 			if err != nil {
 				return err

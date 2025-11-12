@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"os"
 
 	"go.followtheprocess.codes/cli"
@@ -13,7 +14,7 @@ func buildLatest() (*cli.Command, error) {
 		"latest",
 		cli.Short("Show latest semver tag"),
 		cli.Example("Show the latest", "tag latest"),
-		cli.Run(func(cmd *cli.Command) error {
+		cli.Run(func(ctx context.Context, cmd *cli.Command) error {
 			cwd, err := os.Getwd()
 			if err != nil {
 				return err
