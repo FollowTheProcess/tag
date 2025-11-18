@@ -5,7 +5,7 @@ go 1.25
 require (
 	github.com/charmbracelet/huh v0.8.0
 	github.com/pelletier/go-toml/v2 v2.2.4
-	go.followtheprocess.codes/cli v0.18.0
+	go.followtheprocess.codes/cli v0.18.1
 	go.followtheprocess.codes/msg v1.9.2
 	go.followtheprocess.codes/semver v0.2.0
 	mvdan.cc/sh/v3 v3.12.0
