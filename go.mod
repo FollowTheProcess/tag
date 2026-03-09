@@ -1,6 +1,6 @@
 module go.followtheprocess.codes/tag
 
-go 1.25
+go 1.25.0
 
 require (
 	github.com/charmbracelet/huh v0.8.0
@@ -8,7 +8,7 @@ require (
 	go.followtheprocess.codes/cli v0.18.3
 	go.followtheprocess.codes/msg v1.9.2
 	go.followtheprocess.codes/semver v0.2.0
-	mvdan.cc/sh/v3 v3.12.0
+	mvdan.cc/sh/v3 v3.13.0
 )
 
 require (
@@ -39,7 +39,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	go.followtheprocess.codes/hue v1.0.0 // indirect
-	golang.org/x/sys v0.39.0 // indirect
-	golang.org/x/term v0.38.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
+	golang.org/x/term v0.40.0 // indirect
 	golang.org/x/text v0.30.0 // indirect
 )
