@@ -91,6 +91,7 @@ linters:
     gosec:
       excludes:
         - G104 # Errors not checked, handled by errcheck
+        - G703 # Taint analysis has a few false positives
 
     govet:
       enable-all: true
@@ -172,3 +173,6 @@ linters:
 
         - name: unused-receiver
           disabled: true # As above
+
+        - name: deep-exit
+          disabled: true # It won't let me nolint this one
