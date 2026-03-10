@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/charmbracelet/huh"
+	"charm.land/huh/v2"
 	"go.followtheprocess.codes/msg"
 	"go.followtheprocess.codes/semver"
 	"go.followtheprocess.codes/tag/config"
