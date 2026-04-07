@@ -8,7 +8,7 @@ require (
 	go.followtheprocess.codes/cli v0.19.0
 	go.followtheprocess.codes/msg v1.9.2
 	go.followtheprocess.codes/semver v0.2.0
-	mvdan.cc/sh/v3 v3.13.0
+	mvdan.cc/sh/v3 v3.13.1
 )
 
 require (
