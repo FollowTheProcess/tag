@@ -29,6 +29,7 @@ linters:
     - gocyclo # cyclop does this instead
     - godox # "todo" and "fixme" comments are allowed
     - goheader # No need
+    - gomodguard # Deprecated
     - gosmopolitan # No need
     - grouper # Imports take care of themselves, rest is common sense
     - ireturn # This is just not necessary or practical in a real codebase
@@ -58,6 +59,7 @@ linters:
         linters:
           - prealloc # These kinds of optimisations will make no difference to test code
           - gosec # Tests don't need security stuff
+          - goconst # Duplicates in tests are fine
           - noctx # No need
 
   settings:
