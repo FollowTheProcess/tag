@@ -4,7 +4,7 @@ go 1.26
 
 require (
 	charm.land/huh/v2 v2.0.3
-	github.com/pelletier/go-toml/v2 v2.4.0
+	github.com/pelletier/go-toml/v2 v2.4.1
 	go.followtheprocess.codes/cli v0.21.1
 	go.followtheprocess.codes/msg v1.10.0
 	go.followtheprocess.codes/semver v0.2.0
