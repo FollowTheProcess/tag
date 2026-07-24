@@ -33,10 +33,19 @@ builds:
     goarm:
       - "7"
 
+blobs:
+  - provider: s3
+    region: eu-west-2
+    bucket: get.followtheprocess.codes
+    directory: "{{ .ProjectName }}/v{{ .Version }}"
+
 homebrew_casks:
   - name: tag
     binaries:
       - tag
+    url:
+      template: "https://get.followtheprocess.codes/{{ .ProjectName }}/v{{ .Version }}/{{ .ArtifactName }}"
+      verified: github.com/FollowTheProcess/gowc
     directory: Casks
     description: The all in one semver management tool
     homepage: https://github.com/FollowTheProcess/tag

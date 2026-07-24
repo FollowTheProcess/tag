@@ -14,6 +14,8 @@ jobs:
     permissions:
       contents: write
       pull-requests: read
+      id-token: write
+      attestations: write
 
     steps:
       - name: Checkout Code
@@ -25,9 +27,7 @@ jobs:
         run: git fetch --force --tags
 
       - name: Install Syft
-        uses: jaxxstorm/action-install-gh-release@v3.0.0
-        with:
-          repo: anchore/syft
+        uses: anchore/sbom-action/download-syft@latest
 
       - name: Parse Release Version
         id: version
@@ -48,11 +48,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Assume Release Upload Role
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.RELEASE_UPLOAD_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v7
         with:
-          version: latest
+          version: '~> v2'
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+
+      - name: Generate Binary Attestation
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-checksums: dist/checksums.txt
