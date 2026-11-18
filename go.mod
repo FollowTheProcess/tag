@@ -1,6 +1,6 @@
 module go.followtheprocess.codes/tag
 
-go 1.26
+go 1.26.0
 
 require (
 	charm.land/huh/v2 v2.0.3
@@ -8,7 +8,7 @@ require (
 	go.followtheprocess.codes/cli v0.21.1
 	go.followtheprocess.codes/msg v1.10.0
 	go.followtheprocess.codes/semver v0.2.0
-	mvdan.cc/sh/v3 v3.13.1
+	mvdan.cc/sh/v3 v3.14.1
 )
 
 require (
@@ -37,6 +37,6 @@ require (
 	go.followtheprocess.codes/hue v1.2.0 // indirect
 	go.yaml.in/yaml/v4 v4.0.0-rc.4 // indirect
 	golang.org/x/sync v0.20.0 // indirect
-	golang.org/x/sys v0.46.0 // indirect
-	golang.org/x/term v0.44.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/term v0.45.0 // indirect
 )
